@@ -241,4 +241,26 @@ export const getWorkforceAttendance = async (date = '') => {
   return response.data;
 };
 
+// Fee Payments & Billing Services
+export const getFeePayments = async (params = {}) => {
+  const response = await api.get('/erp/payments/', { params });
+  return response.data.results || response.data;
+};
+
+export const createFeePayment = async (data) => {
+  const response = await api.post('/erp/payments/', data);
+  return response.data;
+};
+
+// Belt & Rank Promotions Services
+export const getBeltPromotions = async (params = {}) => {
+  const response = await api.get('/erp/belt-promotions/', { params });
+  return response.data.results || response.data;
+};
+
+export const createBeltPromotion = async (data) => {
+  const response = await api.post('/erp/belt-promotions/', data);
+  return response.data;
+};
+
 export default api;

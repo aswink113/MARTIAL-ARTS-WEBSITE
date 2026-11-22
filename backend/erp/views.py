@@ -15,6 +15,8 @@ from .models import (
     Attendance, 
     StaffPunchLog,
     StaffAttendance,
+    FeePayment,
+    BeltPromotion,
     get_next_student_id,
     get_next_staff_id
 )
@@ -25,7 +27,9 @@ from .serializers import (
     StudentMemberSerializer,
     AttendanceSerializer,
     StaffPunchLogSerializer,
-    StaffAttendanceSerializer
+    StaffAttendanceSerializer,
+    FeePaymentSerializer,
+    BeltPromotionSerializer
 )
 from academy.models import Course, ClassSchedule, AdmissionEnquiry
 from academy.serializers import AdmissionEnquirySerializer
@@ -788,3 +792,50 @@ class WorkforceAttendanceView(APIView):
             'not_punched_count': max(0, not_punched_count),
             'records': records
         })
+
+
+class FeePaymentViewSet(viewsets.ModelViewSet):
+    queryset = FeePayment.objects.all().select_related('student', 'recorded_by')
+    serializer_class = FeePaymentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        student_id = self.request.query_params.get('student')
+        status_filter = self.request.query_params.get('status')
+        month = self.request.query_params.get('month')
+        if student_id:
+            qs = qs.filter(student_id=student_id)
+        if status_filter and status_filter != 'All':
+            qs = qs.filter(status=status_filter)
+        if month:
+            qs = qs.filter(billing_month=month)
+        return qs
+
+    def perform_create(self, serializer):
+        payment = serializer.save(recorded_by=self.request.user)
+        # Update student fee status if marked Paid
+        if payment.status == 'Paid' and payment.student:
+            payment.student.fee_status = 'Paid'
+            payment.student.save(update_fields=['fee_status'])
+
+
+class BeltPromotionViewSet(viewsets.ModelViewSet):
+    queryset = BeltPromotion.objects.all().select_related('student', 'examiner')
+    serializer_class = BeltPromotionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        student_id = self.request.query_params.get('student')
+        if student_id:
+            qs = qs.filter(student_id=student_id)
+        return qs
+
+    def perform_create(self, serializer):
+        promotion = serializer.save()
+        # Automatically advance student's current belt rank
+        if promotion.to_belt and promotion.student:
+            promotion.student.current_belt = promotion.to_belt
+            promotion.student.save(update_fields=['current_belt'])
+

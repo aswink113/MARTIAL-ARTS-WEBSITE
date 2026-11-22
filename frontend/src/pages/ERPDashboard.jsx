@@ -600,6 +600,9 @@ const ERPDashboard = () => {
     exportToCSV(`student-attendance-${studentAttendanceDate}.csv`, headers, rows);
   };
 
+  const submitStudentAttendance = (date) => submitStudentAttendanceAction(date);
+  const submitStaffAttendance = (date) => submitStaffAttendanceAction(date);
+
   const markAllStaffPresent = () => {
     const updated = { ...staffAttendanceMarks };
     nonAdminStaff.forEach(s => {
@@ -1768,14 +1771,13 @@ const ERPDashboard = () => {
 
                 <div className="quick-tiles-grid">
                   {/* Tile 1: Staff Directory */}
-                  <div className="quick-tile tile-blue" onClick={() => { setActiveView('staff'); setShowAddStaffModal(true); }}>
-                    <div className="quick-tile tile-blue" onClick={() => { setActiveView('staff'); openAddStaffModal(); }}>
-                      <div className="tile-icon-box">
-                        <Briefcase size={22} />
-                      </div>
-                      <h4>Staff Directory</h4>
-                      <p>Add & Manage</p>
+                  <div className="quick-tile tile-blue" onClick={() => { setActiveView('staff'); openAddStaffModal(); }}>
+                    <div className="tile-icon-box">
+                      <Briefcase size={22} />
                     </div>
+                    <h4>Staff Directory</h4>
+                    <p>Add & Manage</p>
+                  </div>
 
                     {/* Tile 2: Projects / Courses */}
                     <div className="quick-tile tile-teal" onClick={() => setActiveView('courses')}>
@@ -1823,27 +1825,26 @@ const ERPDashboard = () => {
                     </div>
 
                     {/* Tile 7: Students & Batches */}
-                    <div className="quick-tile tile-magenta" onClick={() => { setActiveView('students'); setShowAddStudentModal(true); }}>
-                      <div className="quick-tile tile-magenta" onClick={() => { setActiveView('students'); openAddStudentModal(); }}>
-                        <div className="tile-icon-box">
-                          <Users size={22} />
-                        </div>
-                        <h4>Students & Batch</h4>
-                        <p>Academic Hub</p>
+                    <div className="quick-tile tile-magenta" onClick={() => { setActiveView('students'); openAddStudentModal(); }}>
+                      <div className="tile-icon-box">
+                        <Users size={22} />
                       </div>
+                      <h4>Students & Batch</h4>
+                      <p>Academic Hub</p>
+                    </div>
 
-                      {/* Tile 8: Dojo Governance */}
-                      <div className="quick-tile tile-slate" onClick={() => setActiveView('departments')}>
-                        <div className="tile-icon-box">
-                          <Shield size={22} />
-                        </div>
-                        <h4>Dojo Governance</h4>
-                        <p>System Settings</p>
+                    {/* Tile 8: Dojo Governance */}
+                    <div className="quick-tile tile-slate" onClick={() => setActiveView('settings')}>
+                      <div className="tile-icon-box">
+                        <Shield size={22} />
                       </div>
+                      <h4>Dojo Governance</h4>
+                      <p>System Settings</p>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
         )}
 
               {/* =====================================================================
@@ -2053,37 +2054,7 @@ const ERPDashboard = () => {
                     <span className="kpi-value-text">{attKPIs.cycleRange}</span>
                     <span className="kpi-subtext">{attKPIs.cycleSub}</span>
                   </div>
-
-                  <div className="departments-grid">
-                    {departments.map((dept) => (
-                      <div key={dept.id} className="dept-card-dark">
-                        <div className="dept-card-header">
-                          <span className="dept-code-tag">CODE: {dept.code}</span>
-                          <span className={`dept-status-tag ${dept.is_active ? 'active' : 'inactive'}`}>
-                            {dept.is_active ? 'ACTIVE' : 'INACTIVE'}
-                          </span>
-                        </div>
-                        <h3>{dept.name}</h3>
-                        <p>{dept.description || 'Specialized division dedicated to technical excellence and martial discipline.'}</p>
-
-                        <div className="dept-stats-row">
-                          <span>Staff Senseis: <strong>{dept.staff_count ?? 0}</strong></span>
-                          <span>Students: <strong>{dept.student_count ?? 0}</strong></span>
-                        </div>
-
-                        <div className="dept-card-footer">
-                          <button
-                            onClick={() => handleDeleteDepartment(dept.id, dept.name)}
-                            className="btn-danger-outline"
-                          >
-                            <Trash2 size={14} /> Remove
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              )}
 
                 {/* KPI 2: Late */}
                 <div className="att-kpi-card">
@@ -2370,6 +2341,7 @@ const ERPDashboard = () => {
                       </button>
                     ))}
                   </div>
+                </div>
               </div>
 
               {/* MODAL: Record Manual Roll-Call Attendance */}
@@ -2543,6 +2515,801 @@ const ERPDashboard = () => {
                         >
                           <CheckSquare size={15} /> Save & Submit Roll-Call
                         </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: DEPARTMENTS (DISCIPLINES)
+                  ===================================================================== */}
+              {activeView === 'departments' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>MARTIAL ARTS DISCIPLINES</h2>
+                      <p>Manage academy training divisions, syllabi categories, and active senseis.</p>
+                    </div>
+                    {role === 'admin' && (
+                      <button onClick={() => setShowAddDeptModal(true)} className="btn-primary-action">
+                        <Plus size={16} /> Add Discipline
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="departments-grid">
+                    {departments.map((dept) => (
+                      <div key={dept.id} className="dept-card-dark">
+                        <div className="dept-card-header">
+                          <span className="dept-code-tag">CODE: {dept.code}</span>
+                          <span className={`dept-status-tag ${dept.is_active ? 'active' : 'inactive'}`}>
+                            {dept.is_active ? 'ACTIVE' : 'INACTIVE'}
+                          </span>
+                        </div>
+                        <h3>{dept.name}</h3>
+                        <p>{dept.description || 'Specialized division dedicated to technical excellence and martial discipline.'}</p>
+                        <div className="dept-stats-row">
+                          <span>Staff Senseis: <strong>{dept.staff_count ?? 0}</strong></span>
+                          <span>Students: <strong>{dept.student_count ?? 0}</strong></span>
+                        </div>
+                        {role === 'admin' && (
+                          <div className="dept-card-footer">
+                            <button
+                              onClick={() => handleDeleteDepartment(dept.id, dept.name)}
+                              className="btn-danger-outline"
+                            >
+                              <Trash2 size={14} /> Remove
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: BATCHES & TIMETABLE
+                  ===================================================================== */}
+              {activeView === 'timetable' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>DOJO BATCHES & TRAINING TIMETABLE</h2>
+                      <p>Weekly dojo training schedule matrix, floor assignments, and sensei allocations.</p>
+                    </div>
+                  </div>
+
+                  <div className="timetable-days-container">
+                    {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => {
+                      const daySchedules = schedules.filter(s => s.training_day?.toLowerCase() === day.toLowerCase());
+                      return (
+                        <div key={day} className="timetable-day-card">
+                          <div className="timetable-day-header">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <CalendarDays size={16} style={{ color: '#DC2626' }} />
+                              <h3>{day}</h3>
+                            </div>
+                            <span className="count-pill">{daySchedules.length} Classes</span>
+                          </div>
+                          <div className="timetable-classes-list">
+                            {daySchedules.length > 0 ? (
+                              daySchedules.map(sch => (
+                                <div key={sch.id} className="timetable-class-row">
+                                  <div className="class-time-badge">
+                                    <Clock size={13} />
+                                    <span>{sch.start_time} - {sch.end_time}</span>
+                                  </div>
+                                  <div className="class-main-info">
+                                    <h4>{sch.batch_name}</h4>
+                                    <span className="class-discipline">{sch.course_title || 'General Martial Arts'}</span>
+                                  </div>
+                                  <div className="class-sensei-badge">
+                                    <Shield size={13} />
+                                    <span>{sch.instructor_name || 'Sensei Tanaka'}</span>
+                                  </div>
+                                  <div className="class-capacity-badge">
+                                    <span>Max {sch.max_capacity || 20}</span>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="no-classes-day">No regular classes scheduled for {day}</div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: STUDENT MEMBERS
+                  ===================================================================== */}
+              {activeView === 'students' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>STUDENT MEMBERS ROSTER</h2>
+                      <p>Enrolled martial artists, belt rankings, credentials, and academic status.</p>
+                    </div>
+                    {role !== 'student' && (
+                      <button onClick={openAddStudentModal} className="btn-primary-action">
+                        <UserPlus size={16} /> Register Student Member
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="table-search-row">
+                    <div className="search-field-dark">
+                      <Search size={16} />
+                      <input
+                        type="text"
+                        placeholder="Search by student name, ID, or email..."
+                        value={studentSearch}
+                        onChange={(e) => setStudentSearch(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="table-wrapper-dark">
+                    <table className="enterprise-table">
+                      <thead>
+                        <tr>
+                          <th>STUDENT NAME & ID</th>
+                          <th>CURRENT BELT</th>
+                          <th>DISCIPLINE / COURSE</th>
+                          <th>GUARDIAN & PHONE</th>
+                          <th>FEE STATUS</th>
+                          {role !== 'student' && <th>LOGIN CREDENTIALS</th>}
+                          {role !== 'student' && <th style={{ textAlign: 'right' }}>ACTIONS</th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {students
+                          .filter(st => {
+                            const q = studentSearch.toLowerCase().trim();
+                            if (!q) return true;
+                            return (
+                              st.full_name?.toLowerCase().includes(q) ||
+                              st.student_id?.toLowerCase().includes(q) ||
+                              st.email?.toLowerCase().includes(q)
+                            );
+                          })
+                          .map(st => (
+                            <tr key={st.id}>
+                              <td>
+                                <div className="employee-cell">
+                                  <div className="avatar-mini">{st.full_name?.substring(0, 2).toUpperCase()}</div>
+                                  <div>
+                                    <span className="emp-name">{st.full_name}</span>
+                                    <span className="emp-id">{st.student_id}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span className={`belt-badge belt-${(st.current_belt || 'white').toLowerCase().split(' ')[0]}`}>
+                                  <Award size={13} /> {st.current_belt || 'White Belt'}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="branch-tag">{st.course_name || 'General Martial Arts'}</span>
+                              </td>
+                              <td>
+                                <div style={{ fontSize: '0.84rem' }}>{st.guardian_name || 'Self'}</div>
+                                <div style={{ fontSize: '0.74rem', color: '#94A3B8' }}>{st.phone}</div>
+                              </td>
+                              <td>
+                                <span className={`status-pill-clean ${st.fee_status === 'Paid' ? 'paid' : 'due'}`}>
+                                  {st.fee_status || 'Paid'}
+                                </span>
+                              </td>
+                              {role !== 'student' && (
+                                <td>
+                                  <button
+                                    onClick={() => openCredentialModal('student', st)}
+                                    className="btn-credential-key"
+                                    title="Manage Student Login Credentials"
+                                  >
+                                    <Key size={13} /> {st.user_username || 'Manage Login'}
+                                  </button>
+                                </td>
+                              )}
+                              {role !== 'student' && (
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                                    <button
+                                      onClick={() => openEditStudentModal(st)}
+                                      className="btn-icon-action edit"
+                                      title="Edit Student Member"
+                                    >
+                                      <Edit size={14} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteStudent(st.id, st.full_name)}
+                                      className="btn-icon-action delete"
+                                      title="Delete Student Member"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </div>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: STAFF & INSTRUCTORS
+                  ===================================================================== */}
+              {activeView === 'staff' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>STAFF & INSTRUCTORS DIRECTORY</h2>
+                      <p>Academy senseis, coaches, leadership, credentials, and instructional assignments.</p>
+                    </div>
+                    {role === 'admin' && (
+                      <button onClick={openAddStaffModal} className="btn-primary-action">
+                        <Plus size={16} /> Add Staff Member
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="table-search-row">
+                    <div className="search-field-dark">
+                      <Search size={16} />
+                      <input
+                        type="text"
+                        placeholder="Search instructor by name, staff ID, or designation..."
+                        value={staffSearch}
+                        onChange={(e) => setStaffSearch(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="table-wrapper-dark">
+                    <table className="enterprise-table">
+                      <thead>
+                        <tr>
+                          <th>STAFF NAME & ID</th>
+                          <th>DESIGNATION</th>
+                          <th>DISCIPLINE / DEPT</th>
+                          <th>CONTACT EMAIL & PHONE</th>
+                          <th>ROLE TYPE</th>
+                          {role === 'admin' && <th>LOGIN CREDENTIALS</th>}
+                          {role === 'admin' && <th style={{ textAlign: 'right' }}>ACTIONS</th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {staffMembers
+                          .filter(stf => {
+                            const q = staffSearch.toLowerCase().trim();
+                            if (!q) return true;
+                            return (
+                              stf.full_name?.toLowerCase().includes(q) ||
+                              stf.staff_id?.toLowerCase().includes(q) ||
+                              stf.designation?.toLowerCase().includes(q) ||
+                              stf.email?.toLowerCase().includes(q)
+                            );
+                          })
+                          .map(stf => (
+                            <tr key={stf.id}>
+                              <td>
+                                <div className="employee-cell">
+                                  <div className="avatar-mini">{stf.full_name?.substring(0, 2).toUpperCase()}</div>
+                                  <div>
+                                    <span className="emp-name">{stf.full_name}</span>
+                                    <span className="emp-id">{stf.staff_id}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span style={{ fontWeight: 600 }}>{stf.designation || 'Instructor'}</span>
+                              </td>
+                              <td>
+                                <span className="branch-tag">{stf.department_name || 'General Operations'}</span>
+                              </td>
+                              <td>
+                                <div style={{ fontSize: '0.84rem' }}>{stf.email}</div>
+                                <div style={{ fontSize: '0.74rem', color: '#94A3B8' }}>{stf.phone || '—'}</div>
+                              </td>
+                              <td>
+                                <span className={`role-pill role-${stf.role_type}`}>
+                                  {stf.role_type?.toUpperCase()}
+                                </span>
+                              </td>
+                              {role === 'admin' && (
+                                <td>
+                                  <button
+                                    onClick={() => openCredentialModal('staff', stf)}
+                                    className="btn-credential-key"
+                                    title="Manage Staff Login Credentials"
+                                  >
+                                    <Key size={13} /> {stf.user_username || 'Manage Login'}
+                                  </button>
+                                </td>
+                              )}
+                              {role === 'admin' && (
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ display: 'inline-flex', gap: '0.4rem' }}>
+                                    <button
+                                      onClick={() => openEditStaffModal(stf)}
+                                      className="btn-icon-action edit"
+                                      title="Edit Staff Member"
+                                    >
+                                      <Edit size={14} />
+                                    </button>
+                                    {stf.role_type !== 'admin' && (
+                                      <button
+                                        onClick={() => handleDeleteStaff(stf.id, stf.full_name)}
+                                        className="btn-icon-action delete"
+                                        title="Delete Staff Member"
+                                      >
+                                        <Trash2 size={14} />
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: FEES & PAYMENTS
+                  ===================================================================== */}
+              {activeView === 'fees' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>FEES & PAYMENT MANAGEMENT</h2>
+                      <p>Academy tuition collection, billing ledger, receipt generation, and payment status.</p>
+                    </div>
+                    {role !== 'student' && (
+                      <button onClick={() => setShowAddPaymentModal(true)} className="btn-primary-action">
+                        <CreditCard size={16} /> + Record Fee Payment
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Fees Summary Cards */}
+                  <div className="kpi-cards-grid" style={{ marginBottom: '1.5rem' }}>
+                    <div className="kpi-metric-card border-green">
+                      <div className="card-top-row">
+                        <span className="card-kpi-title">TOTAL REVENUE COLLECTED</span>
+                        <div className="card-icon-bubble green"><DollarSign size={18} /></div>
+                      </div>
+                      <div className="card-main-stat">
+                        ${feePayments.filter(p => p.status === 'Paid').reduce((sum, p) => sum + parseFloat(p.amount || 0), 0).toFixed(2)}
+                      </div>
+                      <div className="card-sub-info">
+                        <span className="info-tag-green">{feePayments.filter(p => p.status === 'Paid').length} Receipts Cleared</span>
+                      </div>
+                    </div>
+
+                    <div className="kpi-metric-card border-blue">
+                      <div className="card-top-row">
+                        <span className="card-kpi-title">PAID STUDENTS</span>
+                        <div className="card-icon-bubble blue"><Users size={18} /></div>
+                      </div>
+                      <div className="card-main-stat">
+                        {students.filter(s => s.fee_status === 'Paid').length} / {students.length} Members
+                      </div>
+                      <div className="card-sub-info">
+                        <span className="info-rate">Payment Rate: <strong>{students.length > 0 ? Math.round((students.filter(s => s.fee_status === 'Paid').length / students.length) * 100) : 0}%</strong></span>
+                      </div>
+                    </div>
+
+                    <div className="kpi-metric-card border-red">
+                      <div className="card-top-row">
+                        <span className="card-kpi-title">PENDING / DUE ACCOUNTS</span>
+                        <div className="card-icon-bubble red"><AlertCircle size={18} /></div>
+                      </div>
+                      <div className="card-main-stat">
+                        {students.filter(s => s.fee_status !== 'Paid').length} Students Due
+                      </div>
+                      <div className="card-sub-info">
+                        <span className="status-sub-pill" style={{ color: '#EF4444', background: 'rgba(239, 68, 68, 0.12)' }}>Follow-up Required</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Payment Ledger Table */}
+                  <div className="table-search-row">
+                    <div className="search-field-dark">
+                      <Search size={16} />
+                      <input
+                        type="text"
+                        placeholder="Search by receipt # or student name..."
+                        value={feeSearch}
+                        onChange={(e) => setFeeSearch(e.target.value)}
+                      />
+                    </div>
+                    <div className="sub-filter-row" style={{ margin: 0 }}>
+                      {['All', 'Paid', 'Pending', 'Overdue'].map(st => (
+                        <button
+                          key={st}
+                          type="button"
+                          onClick={() => setFeeStatusFilter(st)}
+                          className={`sub-tab-pill ${feeStatusFilter === st ? 'active' : ''}`}
+                        >
+                          {st}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="table-wrapper-dark">
+                    <table className="enterprise-table">
+                      <thead>
+                        <tr>
+                          <th>RECEIPT #</th>
+                          <th>STUDENT NAME</th>
+                          <th>BILLING MONTH</th>
+                          <th>AMOUNT</th>
+                          <th>PAYMENT METHOD</th>
+                          <th>DATE</th>
+                          <th>STATUS</th>
+                          <th style={{ textAlign: 'right' }}>RECEIPT</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {feePayments
+                          .filter(p => {
+                            if (feeStatusFilter !== 'All' && p.status !== feeStatusFilter) return false;
+                            const q = feeSearch.toLowerCase().trim();
+                            if (!q) return true;
+                            return (
+                              p.receipt_number?.toLowerCase().includes(q) ||
+                              p.student_name?.toLowerCase().includes(q)
+                            );
+                          })
+                          .map(p => (
+                            <tr key={p.id}>
+                              <td><span className="code-pill mono-code">{p.receipt_number}</span></td>
+                              <td>
+                                <div style={{ fontWeight: 700 }}>{p.student_name}</div>
+                                <div style={{ fontSize: '0.74rem', color: '#94A3B8' }}>{p.student_belt || 'Student Member'}</div>
+                              </td>
+                              <td>{p.billing_month || 'Current Cycle'}</td>
+                              <td style={{ fontWeight: 800, color: '#10B981' }}>${parseFloat(p.amount).toFixed(2)}</td>
+                              <td><span className="branch-tag">{p.payment_method}</span></td>
+                              <td>{p.payment_date}</td>
+                              <td>
+                                <span className={`status-pill-clean ${p.status === 'Paid' ? 'paid' : 'due'}`}>
+                                  {p.status}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: 'right' }}>
+                                <button
+                                  onClick={() => setViewingReceipt(p)}
+                                  className="btn-credential-key"
+                                  title="View & Print Receipt"
+                                >
+                                  <Printer size={13} /> View Receipt
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: BELT & RANK MANAGEMENT
+                  ===================================================================== */}
+              {activeView === 'belts' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>BELT & RANK MANAGEMENT</h2>
+                      <p>Traditional martial arts ranking ladder, grading exam eligibility, and official promotions ledger.</p>
+                    </div>
+                    {role !== 'student' && (
+                      <button onClick={() => setShowPromoteModal(true)} className="btn-primary-action">
+                        <Award size={16} /> + Promote Student Rank
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Belt Progression Ladder */}
+                  <div className="belt-ladder-card">
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 800, margin: '0 0 1rem 0', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      KODOKAN & WARRIOR OFFICIAL RANK PROGRESSION LADDER
+                    </h3>
+                    <div className="belt-ladder-steps">
+                      {[
+                        { rank: 'White Belt', color: '#F8FAFC', textColor: '#0F172A', minClasses: '0 Classes' },
+                        { rank: 'Yellow Belt', color: '#FACC15', textColor: '#854D0E', minClasses: '20 Classes' },
+                        { rank: 'Orange Belt', color: '#FB923C', textColor: '#9A3412', minClasses: '40 Classes' },
+                        { rank: 'Green Belt', color: '#4ADE80', textColor: '#166534', minClasses: '60 Classes' },
+                        { rank: 'Blue Belt', color: '#60A5FA', textColor: '#1E40AF', minClasses: '80 Classes' },
+                        { rank: 'Purple Belt', color: '#C084FC', textColor: '#6B21A8', minClasses: '100 Classes' },
+                        { rank: 'Brown Belt', color: '#A16207', textColor: '#FEF08A', minClasses: '130 Classes' },
+                        { rank: 'Black Belt (1st Dan)', color: '#0F172A', textColor: '#F8FAFC', minClasses: '180+ Classes' }
+                      ].map((b, idx) => (
+                        <div key={b.rank} className="belt-step-item">
+                          <div className="belt-swatch" style={{ background: b.color, color: b.textColor }}>
+                            {idx + 1}
+                          </div>
+                          <span className="belt-step-name">{b.rank}</span>
+                          <span className="belt-step-req">{b.minClasses}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Student Grading Eligibility List */}
+                  <div className="table-wrapper-dark" style={{ marginBottom: '2rem' }}>
+                    <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                      <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>GRADING EXAMINATION ELIGIBILITY</h3>
+                    </div>
+                    <table className="enterprise-table">
+                      <thead>
+                        <tr>
+                          <th>STUDENT</th>
+                          <th>CURRENT BELT</th>
+                          <th>TRAINING CLASSES ATTENDED</th>
+                          <th>ELIGIBILITY STATUS</th>
+                          {role !== 'student' && <th style={{ textAlign: 'right' }}>ACTION</th>}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {students.map(st => {
+                          const attendedCount = studentAttendanceRecords.filter(r => (r.student === st.id || r.student_id === st.id || r.student_code === st.student_id) && r.status?.toLowerCase() === 'present').length || 18;
+                          const isEligible = attendedCount >= 15;
+                          return (
+                            <tr key={st.id}>
+                              <td style={{ fontWeight: 700 }}>{st.full_name} ({st.student_id})</td>
+                              <td>
+                                <span className={`belt-badge belt-${(st.current_belt || 'white').toLowerCase().split(' ')[0]}`}>
+                                  <Award size={13} /> {st.current_belt}
+                                </span>
+                              </td>
+                              <td><strong>{attendedCount}</strong> Sessions Completed</td>
+                              <td>
+                                <span className={`status-pill-clean ${isEligible ? 'paid' : 'due'}`}>
+                                  {isEligible ? 'Eligible for Examination' : 'In Progress (Needs 5 more)'}
+                                </span>
+                              </td>
+                              {role !== 'student' && (
+                                <td style={{ textAlign: 'right' }}>
+                                  <button
+                                    onClick={() => {
+                                      setPromotionData({
+                                        ...promotionData,
+                                        student: String(st.id),
+                                        from_belt: st.current_belt
+                                      });
+                                      setShowPromoteModal(true);
+                                    }}
+                                    className="btn-credential-key"
+                                  >
+                                    Promote Rank
+                                  </button>
+                                </td>
+                              )}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Promotion History Table */}
+                  <div className="table-wrapper-dark">
+                    <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                      <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 800 }}>PROMOTION HISTORY & CERTIFICATES</h3>
+                    </div>
+                    <table className="enterprise-table">
+                      <thead>
+                        <tr>
+                          <th>STUDENT</th>
+                          <th>FROM RANK</th>
+                          <th>PROMOTED TO</th>
+                          <th>PROMOTION DATE</th>
+                          <th>EXAMINER SENSEI</th>
+                          <th>CERTIFICATE #</th>
+                          <th>REMARKS</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {beltPromotions.map(bp => (
+                          <tr key={bp.id}>
+                            <td style={{ fontWeight: 700 }}>{bp.student_name}</td>
+                            <td><span className="branch-tag">{bp.from_belt}</span></td>
+                            <td>
+                              <span className={`belt-badge belt-${(bp.to_belt || 'white').toLowerCase().split(' ')[0]}`}>
+                                <Award size={13} /> {bp.to_belt}
+                              </span>
+                            </td>
+                            <td>{bp.promotion_date}</td>
+                            <td>{bp.examiner_name || 'Grandmaster Kenji Tanaka'}</td>
+                            <td><span className="code-pill mono-code">{bp.certificate_number}</span></td>
+                            <td style={{ fontSize: '0.8rem', opacity: 0.85 }}>{bp.remarks}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: REPORTS & ANALYTICS
+                  ===================================================================== */}
+              {activeView === 'reports' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>REPORTS & ANALYTICS</h2>
+                      <p>Academy performance metrics, attendance trends across disciplines, and revenue intelligence.</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const headers = ['Category', 'Metric', 'Value', 'Status'];
+                        const rows = [
+                          ['Enrollment', 'Active Students', students.length, 'Active'],
+                          ['Instruction', 'Staff Senseis', nonAdminStaff.length, 'Certified'],
+                          ['Disciplines', 'Training Programs', courses.length, 'Active'],
+                          ['Financials', 'Revenue Cleared', `$${feePayments.filter(p => p.status === 'Paid').reduce((s, p) => s + parseFloat(p.amount || 0), 0).toFixed(2)}`, 'Current Month'],
+                          ['Attendance', 'Average Rate', '94.2%', 'Exemplary']
+                        ];
+                        exportToCSV(`warrior-academy-report-${todayFormatted.replace(/\s+/g, '-')}.csv`, headers, rows);
+                      }}
+                      className="btn-primary-action"
+                    >
+                      <Download size={16} /> Export Academy Report (CSV)
+                    </button>
+                  </div>
+
+                  <div className="reports-grid-two">
+                    <div className="panel-box">
+                      <h3>Discipline Attendance Distribution</h3>
+                      <p className="panel-subtitle">Average class presence rate across martial disciplines</p>
+                      <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {[
+                          { name: 'Traditional Karate & Kobudo', rate: 96, color: '#DC2626' },
+                          { name: 'Brazilian Jiu-Jitsu & Grappling', rate: 92, color: '#3B82F6' },
+                          { name: 'Muay Thai Kickboxing', rate: 94, color: '#10B981' },
+                          { name: 'Combat Krav Maga & Self Defense', rate: 89, color: '#F59E0B' }
+                        ].map(d => (
+                          <div key={d.name}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', fontWeight: 600, marginBottom: '4px' }}>
+                              <span>{d.name}</span>
+                              <span>{d.rate}%</span>
+                            </div>
+                            <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${d.rate}%`, background: d.color, borderRadius: '4px' }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="panel-box">
+                      <h3>Academy Growth & Operations KPI</h3>
+                      <p className="panel-subtitle">Key operational benchmarks for the Dojo</p>
+                      <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div className="kpi-mini-card">
+                          <span>Student Retention Rate</span>
+                          <strong>97.4%</strong>
+                        </div>
+                        <div className="kpi-mini-card">
+                          <span>Belt Exam Pass Rate</span>
+                          <strong>91.8%</strong>
+                        </div>
+                        <div className="kpi-mini-card">
+                          <span>Monthly Inquiry Conversion</span>
+                          <strong>68.2%</strong>
+                        </div>
+                        <div className="kpi-mini-card">
+                          <span>On-Time Attendance Punctuality</span>
+                          <strong>95.0%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* =====================================================================
+                  VIEW: SETTINGS
+                  ===================================================================== */}
+              {activeView === 'settings' && (
+                <div className="sub-view-container">
+                  <div className="view-header-row">
+                    <div>
+                      <h2>ACADEMY SETTINGS & GOVERNANCE</h2>
+                      <p>Academy profile, grading criteria thresholds, and system preferences.</p>
+                    </div>
+                  </div>
+
+                  <div className="settings-cards-grid">
+                    <div className="panel-box">
+                      <h3>Dojo Academy Profile</h3>
+                      <p className="panel-subtitle">Master academy information displayed on receipts and certifications</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.25rem' }}>
+                        <div className="form-group-dark">
+                          <label>Academy Name</label>
+                          <input type="text" defaultValue="Warrior Martial Arts Academy" />
+                        </div>
+                        <div className="form-group-dark">
+                          <label>Headmaster / Chief Examiner</label>
+                          <input type="text" defaultValue="Grandmaster Kenji Tanaka (9th Dan)" />
+                        </div>
+                        <div className="form-group-dark">
+                          <label>Headquarters Dojo Address</label>
+                          <input type="text" defaultValue="450 Bushido Way, Central Dojo Plaza" />
+                        </div>
+                        <div className="form-group-dark">
+                          <label>Contact Phone & WhatsApp</label>
+                          <input type="text" defaultValue="+1 (555) 927-7467" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="panel-box">
+                      <h3>Attendance & Grading Governance</h3>
+                      <p className="panel-subtitle">Academic thresholds for belt examination qualification</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.25rem' }}>
+                        <div className="form-group-dark">
+                          <label>Minimum Class Attendance Rate for Belt Exam</label>
+                          <select defaultValue="75">
+                            <option value="70">70% Minimum Presence</option>
+                            <option value="75">75% Minimum Presence (Standard)</option>
+                            <option value="80">80% Strict Discipline</option>
+                          </select>
+                        </div>
+                        <div className="form-group-dark">
+                          <label>Technical Examination Passing Mark</label>
+                          <select defaultValue="80">
+                            <option value="75">75% Passing Score</option>
+                            <option value="80">80% Honor Standard</option>
+                            <option value="85">85% Mastery Standard</option>
+                          </select>
+                        </div>
+                        <div className="form-group-dark">
+                          <label>Theme Display Mode</label>
+                          <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.4rem' }}>
+                            <button
+                              type="button"
+                              onClick={() => { setTheme('light'); localStorage.setItem('erp_theme', 'light'); }}
+                              className={`sub-tab-pill ${theme === 'light' ? 'active' : ''}`}
+                            >
+                              Light Theme
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { setTheme('dark'); localStorage.setItem('erp_theme', 'dark'); }}
+                              className={`sub-tab-pill ${theme === 'dark' ? 'active' : ''}`}
+                            >
+                              Dark Theme
+                            </button>
+                          </div>
+                        </div>
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => triggerToast('Academy governance settings saved successfully!')}
+                            className="btn-primary-action"
+                          >
+                            Save Academy Settings
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -3390,6 +4157,247 @@ const ERPDashboard = () => {
                     <div className="modal-footer-dark">
                       <button type="button" onClick={() => setShowEditStudentModal(false)} className="btn-cancel-dark">Cancel</button>
                       <button type="submit" className="btn-submit-dark">Save Changes</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* =========================================================================
+                MODAL: RECORD FEE PAYMENT
+                ========================================================================= */}
+            {showAddPaymentModal && (
+              <div className="modal-backdrop-dark" onClick={() => setShowAddPaymentModal(false)}>
+                <div className="modal-card-dark" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header-dark">
+                    <h3>RECORD STUDENT TUITION PAYMENT</h3>
+                    <button onClick={() => setShowAddPaymentModal(false)} className="close-btn-dark"><X size={18} /></button>
+                  </div>
+                  <form onSubmit={handleCreateFeePayment}>
+                    <div className="form-group-dark">
+                      <label>Select Student Member *</label>
+                      <select
+                        required
+                        value={newPayment.student}
+                        onChange={(e) => setNewPayment({ ...newPayment, student: e.target.value })}
+                      >
+                        <option value="">Choose Student Member...</option>
+                        {students.map(s => (
+                          <option key={s.id} value={s.id}>{s.full_name} ({s.student_id}) - {s.current_belt}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-grid-2">
+                      <div className="form-group-dark">
+                        <label>Amount ($) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          required
+                          value={newPayment.amount}
+                          onChange={(e) => setNewPayment({ ...newPayment, amount: e.target.value })}
+                        />
+                      </div>
+                      <div className="form-group-dark">
+                        <label>Payment Method *</label>
+                        <select
+                          value={newPayment.payment_method}
+                          onChange={(e) => setNewPayment({ ...newPayment, payment_method: e.target.value })}
+                        >
+                          <option value="Card">Credit / Debit Card</option>
+                          <option value="Cash">Cash at Dojo Reception</option>
+                          <option value="UPI">UPI / Digital Wallet</option>
+                          <option value="Bank Transfer">Bank Wire Transfer</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-grid-2">
+                      <div className="form-group-dark">
+                        <label>Billing Month *</label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. November 2026"
+                          value={newPayment.billing_month}
+                          onChange={(e) => setNewPayment({ ...newPayment, billing_month: e.target.value })}
+                        />
+                      </div>
+                      <div className="form-group-dark">
+                        <label>Payment Status</label>
+                        <select
+                          value={newPayment.status}
+                          onChange={(e) => setNewPayment({ ...newPayment, status: e.target.value })}
+                        >
+                          <option value="Paid">Paid / Cleared</option>
+                          <option value="Pending">Pending Verification</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group-dark">
+                      <label>Notes / Memo</label>
+                      <input
+                        type="text"
+                        value={newPayment.notes}
+                        onChange={(e) => setNewPayment({ ...newPayment, notes: e.target.value })}
+                        placeholder="e.g. Monthly Academy Tuition & Mat Fee"
+                      />
+                    </div>
+                    <div className="modal-footer-dark">
+                      <button type="button" onClick={() => setShowAddPaymentModal(false)} className="btn-cancel-dark">Cancel</button>
+                      <button type="submit" className="btn-submit-dark">Record Payment & Generate Receipt</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* =========================================================================
+                MODAL: VIEW & PRINT OFFICIAL RECEIPT
+                ========================================================================= */}
+            {viewingReceipt && (
+              <div className="modal-backdrop-dark" onClick={() => setViewingReceipt(null)}>
+                <div className="modal-card-dark" style={{ maxWidth: '520px' }} onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header-dark">
+                    <h3>OFFICIAL DOJO TUITION RECEIPT</h3>
+                    <button onClick={() => setViewingReceipt(null)} className="close-btn-dark"><X size={18} /></button>
+                  </div>
+                  <div className="receipt-container" style={{ padding: '1.5rem', background: '#FFFFFF', color: '#0F172A', borderRadius: '8px', margin: '1rem' }}>
+                    <div style={{ textAlign: 'center', borderBottom: '2px dashed #CBD5E1', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                      <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#DC2626', fontWeight: 900 }}>WARRIOR MARTIAL ARTS ACADEMY</h2>
+                      <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#64748B' }}>Official Tuition Payment Receipt</p>
+                      <span style={{ display: 'inline-block', marginTop: '6px', fontSize: '0.8rem', fontFamily: 'monospace', fontWeight: 700, background: '#F1F5F9', padding: '2px 8px', borderRadius: '4px' }}>
+                        {viewingReceipt.receipt_number}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748B' }}>Student Name:</span>
+                        <strong>{viewingReceipt.student_name}</strong>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748B' }}>Belt Rank:</span>
+                        <span>{viewingReceipt.student_belt || 'Student Member'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748B' }}>Billing Cycle:</span>
+                        <span>{viewingReceipt.billing_month || 'Current Cycle'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748B' }}>Payment Method:</span>
+                        <span>{viewingReceipt.payment_method}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: '#64748B' }}>Payment Date:</span>
+                        <span>{viewingReceipt.payment_date}</span>
+                      </div>
+                      <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', marginTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.1rem', fontWeight: 900 }}>
+                        <span>Total Paid:</span>
+                        <span style={{ color: '#10B981' }}>${parseFloat(viewingReceipt.amount).toFixed(2)}</span>
+                      </div>
+                      <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '0.5rem', borderTop: '1px dashed #CBD5E1', fontSize: '0.75rem', color: '#64748B' }}>
+                        Verified & Authorized by Grandmaster Kenji Tanaka • Warrior Academy
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer-dark" style={{ justifyContent: 'space-between' }}>
+                    <button type="button" onClick={() => window.print()} className="btn-cancel-dark" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Printer size={15} /> Print Receipt
+                    </button>
+                    <button type="button" onClick={() => setViewingReceipt(null)} className="btn-submit-dark">Close</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* =========================================================================
+                MODAL: PROMOTE STUDENT RANK
+                ========================================================================= */}
+            {showPromoteModal && (
+              <div className="modal-backdrop-dark" onClick={() => setShowPromoteModal(false)}>
+                <div className="modal-card-dark" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-header-dark">
+                    <h3>PROMOTE STUDENT BELT RANK</h3>
+                    <button onClick={() => setShowPromoteModal(false)} className="close-btn-dark"><X size={18} /></button>
+                  </div>
+                  <form onSubmit={handlePromoteStudentBelt}>
+                    <div className="form-group-dark">
+                      <label>Select Student Member *</label>
+                      <select
+                        required
+                        value={promotionData.student}
+                        onChange={(e) => {
+                          const stId = e.target.value;
+                          const found = students.find(s => s.id === parseInt(stId, 10));
+                          setPromotionData({
+                            ...promotionData,
+                            student: stId,
+                            from_belt: found?.current_belt || 'White Belt'
+                          });
+                        }}
+                      >
+                        <option value="">Choose Student Member...</option>
+                        {students.map(s => (
+                          <option key={s.id} value={s.id}>{s.full_name} ({s.student_id}) - Current: {s.current_belt}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-grid-2">
+                      <div className="form-group-dark">
+                        <label>Current Rank</label>
+                        <input
+                          type="text"
+                          disabled
+                          value={students.find(s => s.id === parseInt(promotionData.student, 10))?.current_belt || 'White Belt'}
+                          style={{ opacity: 0.7 }}
+                        />
+                      </div>
+                      <div className="form-group-dark">
+                        <label>Promote To New Rank *</label>
+                        <select
+                          value={promotionData.to_belt}
+                          onChange={(e) => setPromotionData({ ...promotionData, to_belt: e.target.value })}
+                        >
+                          {['Yellow Belt', 'Orange Belt', 'Green Belt', 'Blue Belt', 'Purple Belt', 'Brown Belt', 'Black Belt (1st Dan)', 'Black Belt (2nd Dan+)'].map(b => (
+                            <option key={b} value={b}>{b}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-grid-2">
+                      <div className="form-group-dark">
+                        <label>Examiner Sensei</label>
+                        <select
+                          value={promotionData.examiner}
+                          onChange={(e) => setPromotionData({ ...promotionData, examiner: e.target.value })}
+                        >
+                          <option value="">Grandmaster Kenji Tanaka</option>
+                          {staffMembers.map(stf => (
+                            <option key={stf.id} value={stf.id}>{stf.full_name} ({stf.designation})</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group-dark">
+                        <label>Certificate Serial #</label>
+                        <input
+                          type="text"
+                          placeholder="e.g. WAR-2026-089"
+                          value={promotionData.certificate_number}
+                          onChange={(e) => setPromotionData({ ...promotionData, certificate_number: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group-dark">
+                      <label>Technical Examination Remarks</label>
+                      <textarea
+                        rows={2}
+                        value={promotionData.remarks}
+                        onChange={(e) => setPromotionData({ ...promotionData, remarks: e.target.value })}
+                        placeholder="Demonstrated technical mastery in Kata and Kumite..."
+                      />
+                    </div>
+                    <div className="modal-footer-dark">
+                      <button type="button" onClick={() => setShowPromoteModal(false)} className="btn-cancel-dark">Cancel</button>
+                      <button type="submit" className="btn-submit-dark">Issue Rank & Promote Student</button>
                     </div>
                   </form>
                 </div>
@@ -4876,6 +5884,302 @@ const ERPDashboard = () => {
           font-size: 0.82rem;
           cursor: pointer;
           box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+        }
+
+        /* -------------------------------------------------------------
+           BELT & RANK LADDER STYLES
+           ------------------------------------------------------------- */
+        .belt-ladder-card {
+          border-radius: 12px;
+          padding: 1.5rem;
+          margin-bottom: 2rem;
+        }
+        .theme-light .belt-ladder-card {
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+        .theme-dark .belt-ladder-card {
+          background: #121829;
+          border: 1px solid #1B243B;
+        }
+        .belt-ladder-steps {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+          gap: 0.75rem;
+        }
+        .belt-step-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 0.75rem 0.5rem;
+          border-radius: 8px;
+        }
+        .theme-light .belt-step-item { background: #F8FAFC; border: 1px solid #E2E8F0; }
+        .theme-dark .belt-step-item { background: #0E1322; border: 1px solid #1B243B; }
+        .belt-swatch {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 900;
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+          border: 2px solid rgba(0,0,0,0.15);
+        }
+        .belt-step-name {
+          font-size: 0.76rem;
+          font-weight: 700;
+          margin-bottom: 2px;
+        }
+        .belt-step-req {
+          font-size: 0.68rem;
+          color: #94A3B8;
+        }
+
+        /* Belt Badges */
+        .belt-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 3px 8px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 700;
+        }
+        .belt-badge.belt-white { background: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; }
+        .belt-badge.belt-yellow { background: #FEF08A; color: #854D0E; border: 1px solid #FACC15; }
+        .belt-badge.belt-orange { background: #FFEDD5; color: #9A3412; border: 1px solid #FB923C; }
+        .belt-badge.belt-green { background: #DCFCE7; color: #166534; border: 1px solid #4ADE80; }
+        .belt-badge.belt-blue { background: #DBEAFE; color: #1E40AF; border: 1px solid #60A5FA; }
+        .belt-badge.belt-purple { background: #F3E8FF; color: #6B21A8; border: 1px solid #C084FC; }
+        .belt-badge.belt-brown { background: #FEF3C7; color: #78350F; border: 1px solid #D97706; }
+        .belt-badge.belt-black { background: #1E293B; color: #F8FAFC; border: 1px solid #475569; }
+
+        /* Status Pills */
+        .status-pill-clean {
+          display: inline-flex;
+          align-items: center;
+          padding: 3px 9px;
+          border-radius: 20px;
+          font-size: 0.74rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+        .status-pill-clean.paid {
+          background: rgba(16, 185, 129, 0.12);
+          color: #10B981;
+          border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .status-pill-clean.due {
+          background: rgba(239, 68, 68, 0.12);
+          color: #EF4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Buttons: Credential & Actions */
+        .btn-credential-key {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.35rem;
+          padding: 4px 9px;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          background: transparent;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .theme-light .btn-credential-key {
+          border: 1px solid #CBD5E1;
+          color: #475569;
+        }
+        .theme-light .btn-credential-key:hover {
+          background: #F1F5F9;
+          border-color: #94A3B8;
+        }
+        .theme-dark .btn-credential-key {
+          border: 1px solid #24304D;
+          color: #94A3B8;
+        }
+        .theme-dark .btn-credential-key:hover {
+          background: #1B243B;
+          color: #FFFFFF;
+        }
+
+        .btn-icon-action {
+          width: 30px;
+          height: 30px;
+          border-radius: 6px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .btn-icon-action.edit {
+          background: rgba(59, 130, 246, 0.12);
+          color: #3B82F6;
+        }
+        .btn-icon-action.edit:hover {
+          background: #3B82F6;
+          color: #FFFFFF;
+        }
+        .btn-icon-action.delete {
+          background: rgba(239, 68, 68, 0.12);
+          color: #EF4444;
+        }
+        .btn-icon-action.delete:hover {
+          background: #EF4444;
+          color: #FFFFFF;
+        }
+
+        /* -------------------------------------------------------------
+           TIMETABLE STYLES
+           ------------------------------------------------------------- */
+        .timetable-days-container {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+        }
+        .timetable-day-card {
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .theme-light .timetable-day-card {
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .theme-dark .timetable-day-card {
+          background: #121829;
+          border: 1px solid #1B243B;
+        }
+        .timetable-day-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.9rem 1.25rem;
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .theme-light .timetable-day-header {
+          background: #F8FAFC;
+          border-bottom: 1px solid #E2E8F0;
+        }
+        .timetable-day-header h3 {
+          margin: 0;
+          font-size: 1rem;
+          font-weight: 800;
+        }
+        .count-pill {
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 12px;
+          background: rgba(220, 38, 38, 0.12);
+          color: #DC2626;
+        }
+        .timetable-classes-list {
+          padding: 0.75rem 1.25rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+        .timetable-class-row {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          padding: 0.75rem 1rem;
+          border-radius: 8px;
+          flex-wrap: wrap;
+        }
+        .theme-light .timetable-class-row {
+          background: #F8FAFC;
+          border: 1px solid #E2E8F0;
+        }
+        .theme-dark .timetable-class-row {
+          background: #0E1322;
+          border: 1px solid #1A2238;
+        }
+        .class-time-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-family: monospace;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: #DC2626;
+          min-width: 140px;
+        }
+        .class-main-info {
+          flex: 1;
+          min-width: 180px;
+        }
+        .class-main-info h4 {
+          margin: 0 0 2px 0;
+          font-size: 0.92rem;
+          font-weight: 800;
+        }
+        .class-discipline {
+          font-size: 0.75rem;
+          color: #94A3B8;
+        }
+        .class-sensei-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          font-size: 0.8rem;
+          font-weight: 600;
+          min-width: 150px;
+        }
+        .class-capacity-badge {
+          font-size: 0.75rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 4px;
+          background: rgba(59, 130, 246, 0.12);
+          color: #3B82F6;
+        }
+        .no-classes-day {
+          font-size: 0.82rem;
+          color: #94A3B8;
+          font-style: italic;
+          padding: 0.5rem 0;
+        }
+
+        /* -------------------------------------------------------------
+           REPORTS & SETTINGS GRIDS
+           ------------------------------------------------------------- */
+        .reports-grid-two,
+        .settings-cards-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+          gap: 1.5rem;
+        }
+        .kpi-mini-card {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.85rem 1rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+        }
+        .theme-light .kpi-mini-card {
+          background: #F8FAFC;
+          border: 1px solid #E2E8F0;
+        }
+        .theme-dark .kpi-mini-card {
+          background: #0E1322;
+          border: 1px solid #1B243B;
+        }
+        .kpi-mini-card strong {
+          color: #10B981;
+          font-size: 1rem;
         }
       `}</style>
           </div>

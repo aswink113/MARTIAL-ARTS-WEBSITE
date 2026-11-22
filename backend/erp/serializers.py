@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import UserProfile, StudentMember, StaffMember, Department, Attendance, StaffPunchLog, StaffAttendance
+from .models import UserProfile, StudentMember, StaffMember, Department, Attendance, StaffPunchLog, StaffAttendance, FeePayment, BeltPromotion
 from academy.models import Course, ClassSchedule, AdmissionEnquiry
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -222,3 +222,33 @@ class StaffPunchLogSerializer(serializers.ModelSerializer):
         if obj.punch_out:
             return obj.punch_out.strftime('%I:%M %p')
         return '--:-- --'
+
+
+class FeePaymentSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_id = serializers.CharField(source='student.student_id', read_only=True)
+    student_belt = serializers.CharField(source='student.current_belt', read_only=True)
+    recorded_by_name = serializers.CharField(source='recorded_by.username', read_only=True)
+
+    class Meta:
+        model = FeePayment
+        fields = [
+            'id', 'student', 'student_name', 'student_id', 'student_belt',
+            'receipt_number', 'amount', 'payment_date', 'payment_method',
+            'status', 'billing_month', 'notes', 'recorded_by', 'recorded_by_name',
+            'created_at'
+        ]
+
+
+class BeltPromotionSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    student_id = serializers.CharField(source='student.student_id', read_only=True)
+    examiner_name = serializers.CharField(source='examiner.full_name', read_only=True)
+
+    class Meta:
+        model = BeltPromotion
+        fields = [
+            'id', 'student', 'student_name', 'student_id',
+            'from_belt', 'to_belt', 'promotion_date', 'examiner',
+            'examiner_name', 'certificate_number', 'remarks', 'created_at'
+        ]
