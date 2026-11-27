@@ -1,0 +1,18 @@
+<article class="gt-card">
+  <div class="gt-portrait-wrap">
+    {% if instructor.photo %}
+      <img src="{{ instructor.photo.url }}" alt="{{ instructor.name }} — {{ instructor.role }}">
+    {% else %}
+      <img src="/static/images/hero-dojo.jpg" alt="{{ instructor.name }}">
+    {% endif %}
+  </div>
+  <div class="p-4 d-flex flex-column flex-grow-1">
+    <span class="gt-eyebrow mb-1">{{ instructor.role }}</span>
+    <h3 class="h4 mb-1">{{ instructor.name }}</h3>
+    <p class="small fw-semibold text-secondary mb-2">{{ instructor.rank_grade }} &bull; {{ instructor.disciplines }}</p>
+    <p class="small text-muted mb-3 flex-grow-1">{{ instructor.biography|truncatewords:26 }}</p>
+    <div class="pt-2 border-top small text-muted">
+      <i class="bi bi-patch-check-fill text-warning me-1"></i> {{ instructor.qualifications }}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,25 @@
+<article class="gt-card p-4">
+  <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+    <span class="badge rounded-pill text-bg-warning text-dark fw-bold">{{ achievement.award }}</span>
+    <span class="small fw-bold text-muted">{{ achievement.date|date:"M Y" }}</span>
+  </div>
+  <h3 class="h4 mb-1">{{ achievement.title }}</h3>
+  <p class="small fw-semibold text-danger mb-2">{{ achievement.event_name }}</p>
+  <p class="small text-muted mb-3 flex-grow-1">{{ achievement.description }}</p>
+  {% if achievement.consent_confirmed and achievement.person_or_team %}
+    <div class="small fw-semibold text-dark mb-2">
+      <i class="bi bi-person-badge me-1 text-warning"></i> {{ achievement.person_or_team }}
+    </div>
+  {% endif %}
+  {% if achievement.certificate_image %}
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm mt-auto align-self-start"
+            data-lightbox-trigger
+            data-media-type="photo"
+            data-src="{{ achievement.certificate_image.url }}"
+            data-title="{{ achievement.title }}"
+            data-caption="{{ achievement.event_name }} — {{ achievement.award }} ({{ achievement.date|date:'Y' }})">
+      <i class="bi bi-award me-1"></i> View Certificate / Award
+    </button>
+  {% endif %}
+</article>

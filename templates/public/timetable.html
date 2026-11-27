@@ -1,0 +1,142 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Weekly Class Timetable — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Weekly Schedule</span>
+    <h1>Class Timetable &amp; Age Bands</h1>
+    <p>View class timings grouped by day, with instructor, age category, and studio details.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <!-- Filter Bar -->
+    <form method="get" class="gt-form-card p-3 mb-4">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-5">
+          <label for="tt_disc" class="form-label small mb-1">Filter by Discipline</label>
+          <select name="discipline" id="tt_disc" class="form-select">
+            <option value="">All Disciplines</option>
+            {% for disc in disciplines %}
+              <option value="{{ disc }}" {% if selected_discipline == disc %}selected{% endif %}>{{ disc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label for="tt_age" class="form-label small mb-1">Filter by Age Band</label>
+          <select name="age_group" id="tt_age" class="form-select">
+            <option value="">All Age Bands</option>
+            {% for cat in age_categories %}
+              <option value="{{ cat.id }}" {% if selected_age_group == cat.id|stringformat:'s' %}selected{% endif %}>{{ cat.name }} ({{ cat.min_age }}–{{ cat.max_age }} yrs)</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button type="submit" class="btn btn-gt-navy w-100">Apply</button>
+          {% if selected_discipline or selected_age_group %}
+            <a href="{% url 'timetable' %}" class="btn btn-outline-secondary" title="Reset"><i class="bi bi-x-lg"></i></a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+
+    <!-- Age Categories Overview Pills -->
+    {% if age_categories %}
+      <div class="d-flex flex-wrap gap-2 mb-4 align-items-center">
+        <span class="small fw-bold text-muted me-1">Age Bands:</span>
+        {% for cat in age_categories %}
+          <span class="badge bg-white text-dark border py-2 px-3">
+            {{ cat.name }}: <strong>{{ cat.min_age }}–{{ cat.max_age }} yrs</strong>
+          </span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- Stacked Day Cards (Mobile-friendly & Desktop Grid — Blueprint Section 8) -->
+    <div class="row g-4">
+      {% for day in days_grouped %}
+        <div class="col-lg-6">
+          <div class="gt-day-card h-100">
+            <div class="gt-day-header">
+              <h3><i class="bi bi-calendar-day me-2 text-warning"></i>{{ day.day_name }}</h3>
+              <span class="badge bg-danger">{{ day.sessions|length }} Class{{ day.sessions|length|pluralize:"es" }}</span>
+            </div>
+            <div>
+              {% for sess in day.sessions %}
+                <div class="gt-session-row">
+                  <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-1">
+                    <div>
+                      <h4 class="h5 mb-0">
+                        <a href="{% url 'course_detail' sess.course.slug %}" class="text-decoration-none text-dark">
+                          {{ sess.course.name }}
+                        </a>
+                      </h4>
+                      <span class="small text-muted">{{ sess.course.level }} &bull; {{ sess.course.duration }}</span>
+                    </div>
+                    <span class="gt-time-pill">
+                      <i class="bi bi-clock"></i> {{ sess.start_time|time:"g:i A" }} – {{ sess.end_time|time:"g:i A" }}
+                    </span>
+                  </div>
+                  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 small text-muted">
+                    <div class="d-flex flex-wrap gap-3">
+                      <span><i class="bi bi-people-fill text-danger me-1"></i>{{ sess.age_group|default:sess.course.age_group }}</span>
+                      <span><i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ sess.location }}</span>
+                      {% if sess.instructor %}
+                        <span><i class="bi bi-person-badge me-1"></i>{{ sess.instructor.name }}</span>
+                      {% endif %}
+                    </div>
+                    <a href="{% url 'admission' %}?course={{ sess.course.slug }}" class="btn btn-sm btn-outline-danger py-0 px-2 fw-semibold">
+                      Join
+                    </a>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="gt-form-card text-center py-5">
+            <i class="bi bi-calendar-x fs-1 text-muted d-block mb-2"></i>
+            <h3 class="h4">No classes match your filter</h3>
+            <p class="text-muted mb-3">Reset the filters above to see the full weekly schedule.</p>
+            <a href="{% url 'timetable' %}" class="btn btn-gt-navy">View Full Timetable</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Public Tuition & Fee Summary (Only if enabled by Academy Manager — Blueprint Section 8) -->
+    {% if site_settings.show_fees_publicly and courses_for_fees %}
+      <div class="gt-form-card mt-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+          <div>
+            <span class="gt-eyebrow">Transparent Tuition</span>
+            <h2 class="h3 mb-0">Monthly Fee Schedule</h2>
+          </div>
+          <a href="{% url 'admission' %}" class="btn btn-gt-primary btn-sm px-3">Apply for Admission</a>
+        </div>
+        <div class="row g-3">
+          {% for c in courses_for_fees %}
+            <div class="col-md-6 col-lg-4">
+              <div class="p-3 rounded-3 border bg-light h-100">
+                <div class="d-flex justify-content-between align-items-start mb-1">
+                  <strong class="text-dark">{{ c.name }}</strong>
+                  <span class="fw-bold text-danger">{{ c.currency }}{{ c.fee }}</span>
+                </div>
+                <div class="small text-muted mb-1">{{ c.fee_period }} &bull; {{ c.class_frequency }}</div>
+                {% if c.joining_fee_note %}
+                  <div class="small text-secondary">{{ c.joining_fee_note }}</div>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

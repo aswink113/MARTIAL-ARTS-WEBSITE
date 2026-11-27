@@ -1,0 +1,98 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Courses & Training — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Courses &amp; Training{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="portal-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold mb-0">{% if editing %}Edit Course: {{ editing.name }}{% else %}Add New Course{% endif %}</h2>
+        {% if editing %}
+          <a href="{% url 'academy_panel:manage_courses' %}" class="btn btn-sm btn-outline-secondary">Cancel Edit</a>
+        {% endif %}
+      </div>
+
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% if editing %}<input type="hidden" name="course_id" value="{{ editing.pk }}">{% endif %}
+
+        {% for field in form %}
+          <div class="mb-3">
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <div class="form-check">
+                {{ field }}
+                <label class="form-check-label small fw-bold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% else %}
+              <label class="form-label small fw-bold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-text small">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-danger w-100 fw-bold">
+          {% if editing %}Update Course{% else %}Create Course{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="portal-card p-4">
+      <h2 class="h5 fw-bold mb-3">Academy Programmes ({{ courses|length }})</h2>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Course</th>
+              <th>Discipline</th>
+              <th>Fee</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in courses %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ c.name }}</div>
+                  <small class="text-muted">{{ c.age_group }} &bull; {{ c.level }}</small>
+                </td>
+                <td class="small">{{ c.discipline }}</td>
+                <td class="small fw-bold">{{ c.currency }}{{ c.fee }}</td>
+                <td>
+                  {% if c.is_active %}
+                    <span class="badge bg-success-subtle text-success">Active</span>
+                  {% else %}
+                    <span class="badge bg-secondary-subtle text-secondary">Archived</span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <div class="d-inline-flex gap-1">
+                    <a href="?edit={{ c.pk }}" class="btn btn-sm btn-outline-dark">Edit</a>
+                    <form method="post" class="d-inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="toggle_id" value="{{ c.pk }}">
+                      <button type="submit" class="btn btn-sm btn-outline-secondary">
+                        {% if c.is_active %}Archive{% else %}Publish{% endif %}
+                      </button>
+                    </form>
+                    <form method="post" class="d-inline" onsubmit="return confirm('Delete this course?');">
+                      {% csrf_token %}
+                      <input type="hidden" name="delete_id" value="{{ c.pk }}">
+                      <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

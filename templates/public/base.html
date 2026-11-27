@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ site_settings.academy_name }}{% endblock %}</title>
+  <meta name="description"
+    content="{% block meta_description %}{{ site_settings.academy_name }} — {{ site_settings.tagline }}{% endblock %}">
+
+  <!-- Google Fonts: Bold Display (Barlow Condensed), Clean Sans (Plus Jakarta Sans) & Crisp Japanese (Noto Sans JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Noto+Sans+JP:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Bootstrap 5.3 CSS & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- Custom Design System -->
+  <link rel="stylesheet" href="{% static 'css/greentrack.css' %}?v=20261127q">
+  <style>
+    :root {
+      --gt-navy: {
+          {
+          site_settings.primary_color|default: '#14243A'
+        }
+      }
+
+      ;
+
+      --gt-red: {
+          {
+          site_settings.action_color|default: '#D83A3A'
+        }
+      }
+
+      ;
+
+      --gt-gold: {
+          {
+          site_settings.accent_color|default: '#E6A23C'
+        }
+      }
+
+      ;
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  {% if active_page != 'home' %}
+  <!-- Optional Top Strip (Blueprint Section 2) -->
+  <div class="gt-top-strip d-none d-md-block">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-4">
+        <span><i class="bi bi-geo-alt-fill text-warning me-1"></i> {{ site_settings.address|truncatechars:60 }}</span>
+        <span><i class="bi bi-clock-fill text-warning me-1"></i> {{ site_settings.opening_hours|truncatechars:50
+          }}</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <a href="tel:{{ site_settings.phone }}"><i class="bi bi-telephone-fill me-1"></i> {{ site_settings.phone }}</a>
+        <span class="opacity-50">|</span>
+        <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello%20Greentrack%20Martial%20Arts%2C%20I%20would%20like%20information%20about%20joining."
+          target="_blank" rel="noopener">
+          <i class="bi bi-whatsapp text-success me-1"></i> WhatsApp Enquiry
+        </a>
+        <span class="opacity-50">|</span>
+        <a href="{% url 'academy_panel:login' %}"><i class="bi bi-shield-lock me-1"></i> Admin Panel</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Global Header -->
+  <header id="gtMainHeader"
+    class="{% if active_page == 'home' %}gt-header-hero{% else %}sticky-top gt-header-sticky{% endif %}">
+    <nav
+      class="navbar navbar-expand-lg {% if active_page == 'home' %}gt-navbar-hero navbar-dark{% else %}gt-navbar{% endif %}"
+      aria-label="Main Navigation">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{% url 'home' %}">
+          {% if site_settings.logo %}
+          <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.academy_name }} logo" height="42"
+            class="rounded-2">
+          {% else %}
+          <span class="gt-brand-mark" aria-hidden="true">GT</span>
+          {% endif %}
+          <div class="d-flex flex-column">
+            <span class="gt-brand-title">{{ site_settings.academy_name }}</span>
+            <span class="gt-brand-sub">Martial Arts Academy</span>
+          </div>
+        </a>
+
+        <div class="d-flex align-items-center gap-2 d-lg-none">
+          <a href="{% url 'admission' %}" class="btn btn-gt-primary btn-sm px-3">Join Now</a>
+          <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1 mt-3 mt-lg-0">
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'home' %}active{% endif %}"
+                href="{% url 'home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'courses' %}active{% endif %}"
+                href="{% url 'course_list' %}">Courses</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'about' %}active{% endif %}"
+                href="{% url 'about' %}">About Us</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'gallery' %}active{% endif %}"
+                href="{% url 'gallery_list' %}">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'achievements' %}active{% endif %}"
+                href="{% url 'achievement_list' %}">Achievements</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'timetable' %}active{% endif %}"
+                href="{% url 'timetable' %}">Timetable</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'admission' %}active{% endif %}"
+                href="{% url 'admission' %}">Admission</a></li>
+            <li class="nav-item"><a class="nav-link gt-nav-link {% if active_page == 'contact' %}active{% endif %}"
+                href="{% url 'contact' %}">Contact</a></li>
+          </ul>
+          <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+            <a href="{% url 'admission' %}"
+              class="btn {% if active_page == 'home' %}btn-dojo-nav{% else %}btn-gt-primary{% endif %} w-100 w-lg-auto">
+              <span>Join Now</span> <span aria-hidden="true">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show rounded-3 shadow-sm"
+        role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Glassy Liquid Footer -->
+  <footer class="gt-liquid-footer mt-auto">
+    <div class="gt-footer-ambient" aria-hidden="true">
+      <span class="gt-footer-orb gt-footer-orb-1"></span>
+      <span class="gt-footer-orb gt-footer-orb-2"></span>
+    </div>
+
+    <div class="gt-footer-glass-shell">
+      <div class="container">
+        <div class="row g-4 align-items-center">
+          <!-- Left Brand & Quick Trial Pill -->
+          <div class="col-lg-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              {% if site_settings.logo %}
+              <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.academy_name }} logo" height="32"
+                class="rounded-2">
+              {% else %}
+              <span class="gt-brand-mark gt-footer-brand-mark" aria-hidden="true">GT</span>
+              {% endif %}
+              <span class="display-font fs-5 text-white text-uppercase">{{ site_settings.academy_name }}</span>
+            </div>
+            <h3 class="gt-footer-headline mb-3">Master the mind.<br>Command the body.</h3>
+            <form action="{% url 'admission' %}" method="get" class="gt-footer-pill-form mb-2">
+              <input type="email" name="email" placeholder="you@email.com" aria-label="Email for trial enquiry"
+                class="gt-footer-pill-input">
+              <button type="submit" class="gt-footer-pill-btn">Book Trial</button>
+            </form>
+            <p class="gt-footer-micro mb-0">Free introductory trial &bull; Bengaluru</p>
+          </div>
+
+          <!-- Right Minimal Liquid Glass Card -->
+          <div class="col-lg-8">
+            <div class="gt-footer-nav-card">
+              <div class="row g-3">
+                <div class="col-6 col-md-3">
+                  <h4 class="gt-footer-col-title">Programmes</h4>
+                  <ul class="gt-footer-links">
+                    <li><a href="{% url 'course_list' %}">Courses</a></li>
+                    <li><a href="{% url 'timetable' %}">Timetable</a></li>
+                    <li><a href="{% url 'admission' %}">Trial Class</a></li>
+                  </ul>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <h4 class="gt-footer-col-title">Academy</h4>
+                  <ul class="gt-footer-links">
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                    <li>
+                      <a href="{% url 'admission' %}" class="d-inline-flex align-items-center gap-2">
+                        Admissions <span class="gt-status-pill-badge">Open</span>
+                      </a>
+                    </li>
+                    <li><a href="{% url 'gallery_list' %}">Gallery</a></li>
+                    <li><a href="{% url 'achievement_list' %}">Achievements</a></li>
+                  </ul>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <h4 class="gt-footer-col-title">Contact</h4>
+                  <ul class="gt-footer-links">
+                    <li><a href="tel:{{ site_settings.phone }}">{{ site_settings.phone }}</a></li>
+                    <li>
+                      <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello%20Greentrack%20Martial%20Arts"
+                        target="_blank" rel="noopener">WhatsApp</a>
+                    </li>
+                    <li><a href="{% url 'contact' %}">Contact Page</a></li>
+                  </ul>
+                </div>
+
+                <div class="col-6 col-md-3">
+                  <h4 class="gt-footer-col-title">Info</h4>
+                  <ul class="gt-footer-links">
+                    <li><a href="{% url 'privacy' %}">Privacy</a></li>
+                    {% if site_settings.map_url %}
+                    <li><a href="{{ site_settings.map_url }}" target="_blank" rel="noopener">Directions</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'academy_panel:login' %}">Admin</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Status & Social Pill Row -->
+        <div class="gt-footer-bottom-row">
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <span>&copy; {% now "Y" %} {{ site_settings.academy_name }}</span>
+            <span class="gt-system-status">
+              <span class="gt-green-dot"></span> Admissions Open
+            </span>
+          </div>
+
+          <div class="gt-footer-social-pill">
+            {% if site_settings.instagram_url %}
+            <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram"><i
+                class="bi bi-instagram"></i></a>
+            {% endif %}
+            {% if site_settings.facebook_url %}
+            <a href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook"><i
+                class="bi bi-facebook"></i></a>
+            {% endif %}
+            {% if site_settings.youtube_url %}
+            <a href="{{ site_settings.youtube_url }}" target="_blank" rel="noopener" aria-label="YouTube"><i
+                class="bi bi-youtube"></i></a>
+            {% endif %}
+            <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello%20Greentrack%20Martial%20Arts"
+              target="_blank" rel="noopener" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+            <span class="gt-footer-dojo-tag"><i class="bi bi-geo-alt-fill me-1"></i>Bengaluru</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Huge Glass Display Text at Bottom -->
+      <div class="gt-footer-glass-wordmark" aria-hidden="true">GREEN TRACK</div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp Quick Chat -->
+  <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello%20Greentrack%20Martial%20Arts%2C%20I%20would%20like%20to%20book%20a%20trial%20class."
+    target="_blank" rel="noopener" class="gt-floating-wa" aria-label="Chat on WhatsApp">
+    <i class="bi bi-whatsapp fs-5"></i>
+    <span>WhatsApp Us</span>
+  </a>
+
+  <!-- Shared Lightbox Modal for Gallery & Certificates -->
+  <div class="modal fade" id="gtLightboxModal" tabindex="-1" aria-labelledby="gtLightboxTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header bg-dark text-white border-0">
+          <h5 class="modal-title display-font fs-4 text-white" id="gtLightboxTitle">Media Preview</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body bg-black p-3 text-center" id="gtLightboxMedia"></div>
+        <div class="modal-footer bg-dark text-white border-0 justify-content-start">
+          <p class="mb-0 small text-white-50" id="gtLightboxCaption"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'js/greentrack.js' %}"></script>
+  <script>
+    (function () {
+      var header = document.getElementById('gtMainHeader');
+      if (!header) return;
+      function updateHeader() {
+        if (window.scrollY > 24) {
+          header.classList.add('gt-header-scrolled');
+        } else {
+          header.classList.remove('gt-header-scrolled');
+        }
+      }
+      updateHeader();
+      window.addEventListener('scroll', updateHeader, { passive: true });
+    })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

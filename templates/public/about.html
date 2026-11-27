@@ -1,0 +1,114 @@
+{% extends 'public/base.html' %}
+{% load static %}
+
+{% block title %}About Us & Instructors — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Our Story &amp; Team</span>
+    <h1>About {{ site_settings.academy_name }}</h1>
+    <p>Dedicated to safe, structured martial arts education, certified coaching, and lifelong confidence since {{ site_settings.founded_year }}.</p>
+  </div>
+</section>
+
+<!-- Academy History & Training Philosophy -->
+<section class="gt-section">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <span class="gt-eyebrow">Established {{ site_settings.founded_year }}</span>
+        <h2 class="gt-section-title">Academy History &amp; Mission</h2>
+        <p class="mb-4">{{ site_settings.academy_story|linebreaksbr }}</p>
+
+        <h3 class="h4 mt-4 mb-2">Our Training Philosophy</h3>
+        <p class="text-muted mb-4">{{ site_settings.training_philosophy|linebreaksbr }}</p>
+
+        <div class="d-flex flex-wrap gap-2">
+          <span class="badge bg-light text-dark border py-2 px-3">Discipline</span>
+          <span class="badge bg-light text-dark border py-2 px-3">Fitness</span>
+          <span class="badge bg-light text-dark border py-2 px-3">Respect</span>
+          <span class="badge bg-light text-dark border py-2 px-3">Confidence</span>
+          <span class="badge bg-light text-dark border py-2 px-3">Safety</span>
+          <span class="badge bg-light text-dark border py-2 px-3">Clear Progression</span>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        {% if head_coach %}
+          <div class="gt-card p-4 bg-light">
+            <div class="row g-4 align-items-center">
+              <div class="col-sm-5">
+                {% if head_coach.photo %}
+                  <img src="{{ head_coach.photo.url }}" alt="{{ head_coach.name }}" class="img-fluid rounded-3 w-100" style="aspect-ratio: 4/5; object-fit: cover; object-position: top;">
+                {% else %}
+                  <img src="{% static 'images/hero-dojo.jpg' %}" alt="{{ head_coach.name }}" class="img-fluid rounded-3">
+                {% endif %}
+              </div>
+              <div class="col-sm-7">
+                <span class="gt-eyebrow">Head Coach</span>
+                <h3 class="h3 mb-1">{{ head_coach.name }}</h3>
+                <p class="small fw-bold text-danger mb-2">{{ head_coach.rank_grade }} &bull; {{ head_coach.experience }}</p>
+                <p class="small text-muted mb-2">{{ head_coach.biography }}</p>
+                <p class="small fw-semibold mb-0"><i class="bi bi-patch-check-fill text-warning me-1"></i> {{ head_coach.qualifications }}</p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Instructor Team -->
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="text-center mx-auto mb-5" style="max-width: 640px;">
+      <span class="gt-eyebrow">Coaching Staff</span>
+      <h2 class="gt-section-title">Qualified Instructor Team</h2>
+      <p class="text-muted mb-0">Every class is taught by trained instructors committed to technical excellence and student welfare.</p>
+    </div>
+    <div class="row g-4">
+      {% for instructor in instructors %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/instructor_card.html' with instructor=instructor %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Achievements Timeline -->
+{% if achievements %}
+<section class="gt-section">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+      <div>
+        <span class="gt-eyebrow">Milestones &amp; Awards</span>
+        <h2 class="gt-section-title mb-0">Academy Achievements</h2>
+      </div>
+      <a href="{% url 'achievement_list' %}" class="btn btn-gt-outline btn-sm">View Achievements Page</a>
+    </div>
+    <div class="row g-4">
+      {% for ach in achievements %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/achievement_card.html' with achievement=ach %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- CTA -->
+<section class="gt-section gt-section-navy text-center">
+  <div class="container">
+    <h2 class="gt-section-title text-white mb-3">Ready to Visit Our Dojo?</h2>
+    <p class="text-white-50 mx-auto mb-4" style="max-width: 580px;">Explore our courses or submit an online admission request for a trial session.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="{% url 'course_list' %}" class="btn btn-gt-outline-light">Explore Courses</a>
+      <a href="{% url 'admission' %}" class="btn btn-gt-primary">Apply for Admission</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

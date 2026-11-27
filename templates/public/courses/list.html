@@ -1,0 +1,73 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Courses & Programmes — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Academy Curriculum</span>
+    <h1>Courses &amp; Training Programmes</h1>
+    <p>Compare our martial arts programmes across Karate, Boxing, Kung Fu, Kids training, and practical Self-Defence.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <!-- Simple Category & Filter Bar (Blueprint Section 5) -->
+    <form method="get" class="gt-form-card p-3 mb-4">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label for="id_discipline" class="form-label small mb-1">Discipline</label>
+          <select name="discipline" id="id_discipline" class="form-select">
+            <option value="">All Disciplines</option>
+            {% for disc in disciplines %}
+              <option value="{{ disc }}" {% if selected_discipline == disc %}selected{% endif %}>{{ disc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="id_age_group" class="form-label small mb-1">Age Group</label>
+          <select name="age_group" id="id_age_group" class="form-select">
+            <option value="">All Age Groups</option>
+            {% for cat in age_categories %}
+              <option value="{{ cat.id }}" {% if selected_age_group == cat.id|stringformat:'s' %}selected{% endif %}>{{ cat.name }} ({{ cat.min_age }}–{{ cat.max_age }} yrs)</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="id_level" class="form-label small mb-1">Training Level</label>
+          <select name="level" id="id_level" class="form-select">
+            <option value="">All Levels</option>
+            {% for lvl in levels %}
+              <option value="{{ lvl }}" {% if selected_level == lvl %}selected{% endif %}>{{ lvl }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+          <button type="submit" class="btn btn-gt-navy w-100">Filter</button>
+          {% if selected_discipline or selected_age_group or selected_level %}
+            <a href="{% url 'course_list' %}" class="btn btn-outline-secondary" title="Clear Filters"><i class="bi bi-x-lg"></i></a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+
+    <div class="row g-4">
+      {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/course_card.html' with course=course %}
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="gt-form-card text-center py-5">
+            <i class="bi bi-search fs-1 text-muted d-block mb-2"></i>
+            <h3 class="h4">No matching programmes found</h3>
+            <p class="text-muted mb-3">Try resetting your filters to view all active academy courses.</p>
+            <a href="{% url 'course_list' %}" class="btn btn-gt-navy">Show All Courses</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

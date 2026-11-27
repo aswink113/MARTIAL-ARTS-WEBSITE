@@ -1,0 +1,75 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Achievements — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Achievements &amp; Certificates{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="portal-card p-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 fw-bold mb-0">{% if editing %}Edit Achievement{% else %}Add Achievement{% endif %}</h2>
+        {% if editing %}
+          <a href="{% url 'academy_panel:manage_achievements' %}" class="btn btn-sm btn-outline-secondary">Cancel</a>
+        {% endif %}
+      </div>
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if editing %}<input type="hidden" name="achievement_id" value="{{ editing.pk }}">{% endif %}
+        {% for field in form %}
+          <div class="mb-3">
+            {% if field.field.widget.input_type == 'checkbox' %}
+              <div class="form-check">
+                {{ field }}
+                <label class="form-check-label small fw-bold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+            {% else %}
+              <label class="form-label small fw-bold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            {% endif %}
+            {% if field.help_text %}<div class="form-text small">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-danger w-100 fw-bold">Save Achievement</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="portal-card p-4">
+      <h2 class="h5 fw-bold mb-3">Recorded Achievements ({{ achievements|length }})</h2>
+      <div class="d-flex flex-column gap-3">
+        {% for ach in achievements %}
+          <div class="border rounded-3 p-3 d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <div class="d-flex gap-2 align-items-center mb-1">
+                <span class="badge bg-warning text-dark">{{ ach.award }}</span>
+                <small class="text-muted">{{ ach.date|date:"d M Y" }}</small>
+                <span class="badge {% if ach.is_published %}bg-success-subtle text-success{% else %}bg-secondary{% endif %}">
+                  {% if ach.is_published %}Published{% else %}Hidden{% endif %}
+                </span>
+              </div>
+              <h3 class="h6 fw-bold mb-0">{{ ach.title }}</h3>
+              <div class="small text-muted">{{ ach.event_name }}</div>
+            </div>
+            <div class="d-flex gap-1">
+              <a href="?edit={{ ach.pk }}" class="btn btn-sm btn-outline-dark">Edit</a>
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="toggle_id" value="{{ ach.pk }}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Toggle</button>
+              </form>
+              <form method="post" onsubmit="return confirm('Delete this achievement?');">
+                {% csrf_token %}
+                <input type="hidden" name="delete_id" value="{{ ach.pk }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

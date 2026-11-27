@@ -1,0 +1,146 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Admin Dashboard — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Academy Admin Dashboard{% endblock %}
+
+{% block content %}
+<!-- Welcome Header -->
+<div class="portal-card p-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+  <div>
+    <h1 class="h3 fw-bold mb-1">{{ greeting }}, Academy Admin!</h1>
+    <p class="text-muted small mb-0">Manage your entire {{ site_settings.academy_name }} website, courses, timetable, media, and admissions from one place.</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'academy_panel:manage_courses' %}" class="btn btn-dark btn-sm"><i class="bi bi-plus-circle me-1"></i> Add Course</a>
+    <a href="{% url 'academy_panel:manage_timetable' %}" class="btn btn-outline-dark btn-sm"><i class="bi bi-calendar3 me-1"></i> Edit Timetable</a>
+    <a href="{% url 'academy_panel:manage_gallery' %}" class="btn btn-outline-dark btn-sm"><i class="bi bi-images me-1"></i> Upload Gallery</a>
+    <a href="{% url 'academy_panel:applications' %}?status=New" class="btn btn-danger btn-sm"><i class="bi bi-person-plus me-1"></i> New Applications ({{ new_apps_count }})</a>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="portal-stat-card accent-red">
+      <div class="small text-muted fw-bold text-uppercase mb-1">New Applications</div>
+      <div class="display-6 fw-bold text-dark">{{ new_apps_count }}</div>
+      <a href="{% url 'academy_panel:applications' %}?status=New" class="small text-danger text-decoration-none fw-semibold">Review new leads &rarr;</a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="portal-stat-card accent-gold">
+      <div class="small text-muted fw-bold text-uppercase mb-1">Awaiting Follow-up</div>
+      <div class="display-6 fw-bold text-dark">{{ followup_apps_count }}</div>
+      <a href="{% url 'academy_panel:applications' %}" class="small text-dark text-decoration-none fw-semibold">Open admissions queue &rarr;</a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="portal-stat-card">
+      <div class="small text-muted fw-bold text-uppercase mb-1">Active Courses</div>
+      <div class="display-6 fw-bold text-dark">{{ active_courses_count }}</div>
+      <a href="{% url 'academy_panel:manage_courses' %}" class="small text-dark text-decoration-none fw-semibold">Manage courses &rarr;</a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="portal-stat-card accent-green">
+      <div class="small text-muted fw-bold text-uppercase mb-1">Weekly Class Sessions</div>
+      <div class="display-6 fw-bold text-dark">{{ active_sessions_count }}</div>
+      <a href="{% url 'academy_panel:manage_timetable' %}" class="small text-success text-decoration-none fw-semibold">Update timetable &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Editing Grid -->
+<div class="portal-card p-4 mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold mb-0">Quick Website Editors</h2>
+    <a href="{% url 'academy_panel:content_hub' %}" class="btn btn-sm btn-outline-secondary">View All Editors</a>
+  </div>
+  <div class="row g-3">
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_courses' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-journal-text fs-4 text-danger"></i>
+        <span class="small fw-bold">Courses</span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_timetable' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-calendar3 fs-4 text-primary"></i>
+        <span class="small fw-bold">Timetable</span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_instructors' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-people fs-4 text-dark"></i>
+        <span class="small fw-bold">Instructors</span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_gallery' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-images fs-4 text-success"></i>
+        <span class="small fw-bold">Gallery ({{ gallery_count }})</span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_achievements' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-trophy fs-4 text-warning"></i>
+        <span class="small fw-bold">Achievements</span>
+      </a>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <a href="{% url 'academy_panel:manage_appearance' %}" class="btn btn-light border w-100 py-3 text-center h-100 d-flex flex-column align-items-center justify-content-center gap-1">
+        <i class="bi bi-palette fs-4 text-danger"></i>
+        <span class="small fw-bold">Banners &amp; Theme</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Admission Applications -->
+<div class="portal-card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 fw-bold mb-0">Recent Admission Applications</h2>
+    <div class="d-flex gap-2">
+      <a href="{% url 'academy_panel:enquiries' %}" class="btn btn-sm btn-outline-dark">General Enquiries ({{ new_enquiries_count }} New)</a>
+      <a href="{% url 'academy_panel:applications' %}" class="btn btn-sm btn-outline-secondary">View All</a>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Reference</th>
+          <th>Student Name</th>
+          <th>Selected Course</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in recent_applications %}
+          <tr>
+            <td class="fw-bold font-monospace small">{{ app.reference }}</td>
+            <td>
+              <div class="fw-semibold">{{ app.student_name }}</div>
+              {% if app.guardian_name %}<small class="text-muted">Guardian: {{ app.guardian_name }}</small>{% endif %}
+            </td>
+            <td>{{ app.course.name }}</td>
+            <td class="small text-muted">{{ app.submitted_at|date:"d M Y" }}</td>
+            <td>
+              <span class="badge rounded-pill status-badge-{{ app.status|cut:' Scheduled' }}">{{ app.status }}</span>
+            </td>
+            <td class="text-end">
+              <a href="{% url 'academy_panel:application_detail' app.pk %}" class="btn btn-sm btn-outline-dark">Review</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted py-4">No admission applications submitted yet.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

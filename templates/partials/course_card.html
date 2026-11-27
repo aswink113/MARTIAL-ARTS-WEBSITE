@@ -1,0 +1,28 @@
+<article class="gt-card">
+  <div class="gt-card-img-wrap">
+    {% if course.image %}
+      <img src="{{ course.image.url }}" alt="{{ course.name }} training session">
+    {% else %}
+      <img src="/static/images/hero-dojo.jpg" alt="{{ course.name }}">
+    {% endif %}
+    <span class="gt-badge-discipline">{{ course.discipline }}</span>
+  </div>
+  <div class="p-4 d-flex flex-column flex-grow-1">
+    <div class="d-flex flex-wrap gap-2 mb-2">
+      <span class="gt-badge-age">{{ course.age_group }}</span>
+      <span class="gt-badge-level">{{ course.level }}</span>
+    </div>
+    <h3 class="h4 mb-2">{{ course.name }}</h3>
+    <p class="text-muted small mb-3 flex-grow-1">{{ course.summary }}</p>
+    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+      {% if site_settings.show_fees_publicly %}
+        <span class="fw-bold text-dark">{{ course.currency }}{{ course.fee }} <small class="text-muted fw-normal">{{ course.fee_period }}</small></span>
+      {% else %}
+        <span class="small text-muted">{{ course.class_frequency }}</span>
+      {% endif %}
+      <a href="{% url 'course_detail' course.slug %}" class="btn btn-gt-navy btn-sm px-3">
+        View Details <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</article>

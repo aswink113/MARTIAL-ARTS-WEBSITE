@@ -1,19 +1,14 @@
 [Unit]
-Description=Gunicorn daemon for Warrior Martial Arts Django REST Backend
+Description=Greentrack Martial Arts Django application
 After=network.target
 
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/var/www/martial-arts/backend
-ExecStart=/var/www/martial-arts/backend/venv/bin/gunicorn \
-          --workers 3 \
-          --bind 127.0.0.1:8000 \
-          --access-logfile /var/log/gunicorn/martial_arts_access.log \
-          --error-logfile /var/log/gunicorn/martial_arts_error.log \
-          core.wsgi:application
-
-Restart=always
+WorkingDirectory=/var/www/martial-arts
+EnvironmentFile=/var/www/martial-arts/.env
+ExecStart=/var/www/martial-arts/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
+Restart=on-failure
 RestartSec=5
 
 [Install]

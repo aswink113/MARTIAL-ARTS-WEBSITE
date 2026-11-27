@@ -1,0 +1,58 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}All Website Editors — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Website Editing Hub{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-journal-text text-danger me-2"></i>Courses &amp; Training ({{ courses_count }})</h3>
+      <p class="small text-muted">Add new courses, edit descriptions, curriculum skills, tuition fees, or archive old programmes.</p>
+      <a href="{% url 'academy_panel:manage_courses' %}" class="btn btn-dark btn-sm">Edit Courses</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-calendar3 text-danger me-2"></i>Class Timetable ({{ sessions_count }})</h3>
+      <p class="small text-muted">Add or adjust weekly sessions, studio rooms, timings, and age categories.</p>
+      <a href="{% url 'academy_panel:manage_timetable' %}" class="btn btn-dark btn-sm">Edit Timetable</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-people text-danger me-2"></i>Instructors ({{ instructors_count }})</h3>
+      <p class="small text-muted">Update coach portraits, verified ranks, qualifications, and biographies.</p>
+      <a href="{% url 'academy_panel:manage_instructors' %}" class="btn btn-dark btn-sm">Edit Instructors</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-images text-danger me-2"></i>Gallery ({{ gallery_count }})</h3>
+      <p class="small text-muted">Upload training photos, competition photos, and video links with minor consent checks.</p>
+      <a href="{% url 'academy_panel:manage_gallery' %}" class="btn btn-dark btn-sm">Edit Gallery</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-trophy text-danger me-2"></i>Achievements ({{ achievements_count }})</h3>
+      <p class="small text-muted">Publish tournament results, grading awards, and official certificates.</p>
+      <a href="{% url 'academy_panel:manage_achievements' %}" class="btn btn-dark btn-sm">Edit Achievements</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-building text-danger me-2"></i>Academy Information</h3>
+      <p class="small text-muted">Edit academy story, phone, WhatsApp, address, social links, and privacy notice.</p>
+      <a href="{% url 'academy_panel:manage_info' %}" class="btn btn-dark btn-sm">Edit Academy Info</a>
+    </div>
+  </div>
+  <div class="col-md-6 col-lg-4">
+    <div class="portal-card p-4 h-100">
+      <h3 class="h5 fw-bold"><i class="bi bi-palette text-danger me-2"></i>Banners &amp; Appearance ({{ banners_count }})</h3>
+      <p class="small text-muted">Manage home hero banners, academy logo, brand colours, and public fee visibility.</p>
+      <a href="{% url 'academy_panel:manage_appearance' %}" class="btn btn-dark btn-sm">Edit Banners &amp; Theme</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

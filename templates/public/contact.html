@@ -1,0 +1,148 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Contact Us — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Get In Touch</span>
+    <h1>Contact {{ site_settings.academy_name }}</h1>
+    <p>Reach our coaching and admissions team by phone, WhatsApp, email, or visit us at the academy.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Contact Info & Conversion Tools -->
+      <div class="col-lg-5">
+        <div class="gt-form-card h-100">
+          <h2 class="h3 mb-4">Academy Contact Details</h2>
+
+          <div class="d-flex flex-column gap-4 mb-4">
+            <div class="d-flex align-items-start gap-3">
+              <div class="gt-feature-icon mb-0 flex-shrink-0"><i class="bi bi-telephone-fill"></i></div>
+              <div>
+                <div class="small text-muted fw-bold text-uppercase">Direct Call</div>
+                <a href="tel:{{ site_settings.phone }}" class="fs-5 fw-bold text-dark text-decoration-none">{{ site_settings.phone }}</a>
+                <div class="small text-muted">Tap to call directly from mobile</div>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-start gap-3">
+              <div class="gt-feature-icon mb-0 flex-shrink-0 bg-success bg-opacity-10 text-success"><i class="bi bi-whatsapp"></i></div>
+              <div>
+                <div class="small text-muted fw-bold text-uppercase">WhatsApp Enquiry</div>
+                <a href="https://wa.me/{{ site_settings.whatsapp }}?text={{ whatsapp_prefill }}" target="_blank" rel="noopener" class="btn btn-success btn-sm mt-1">
+                  <i class="bi bi-whatsapp me-1"></i> Start WhatsApp Chat
+                </a>
+                <div class="small text-muted mt-1">Quick questions (use the Admission page for formal enrolment)</div>
+              </div>
+            </div>
+
+            {% if site_settings.email %}
+              <div class="d-flex align-items-start gap-3">
+                <div class="gt-feature-icon mb-0 flex-shrink-0"><i class="bi bi-envelope-fill"></i></div>
+                <div>
+                  <div class="small text-muted fw-bold text-uppercase">Email</div>
+                  <a href="mailto:{{ site_settings.email }}" class="fw-semibold text-dark text-decoration-none">{{ site_settings.email }}</a>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="d-flex align-items-start gap-3">
+              <div class="gt-feature-icon mb-0 flex-shrink-0"><i class="bi bi-geo-alt-fill"></i></div>
+              <div>
+                <div class="small text-muted fw-bold text-uppercase">Academy Address</div>
+                <p class="mb-1 fw-semibold text-dark">{{ site_settings.address }}</p>
+                <div class="small text-muted mb-2"><i class="bi bi-clock me-1"></i> {{ site_settings.opening_hours }}</div>
+                {% if site_settings.map_url %}
+                  <a href="{{ site_settings.map_url }}" target="_blank" rel="noopener" class="btn btn-gt-outline btn-sm">
+                    <i class="bi bi-map me-1"></i> Google Maps Directions
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-top">
+            <div class="small fw-bold text-muted text-uppercase mb-2">Official Social Pages</div>
+            <div class="d-flex gap-2">
+              {% if site_settings.instagram_url %}
+                <a href="{{ site_settings.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark btn-sm">
+                  <i class="bi bi-instagram me-1"></i> Instagram
+                </a>
+              {% endif %}
+              {% if site_settings.facebook_url %}
+                <a href="{{ site_settings.facebook_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark btn-sm">
+                  <i class="bi bi-facebook me-1"></i> Facebook
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- General Enquiry Form -->
+      <div class="col-lg-7">
+        <div class="gt-form-card h-100">
+          <h2 class="h3 mb-2">Send a General Enquiry</h2>
+          <p class="small text-muted mb-4">Have a question about age groups, kit requirements, or visiting? Send us a message below. Looking to enrol? <a href="{% url 'admission' %}" class="text-danger fw-semibold">Go to Online Admission Form</a>.</p>
+
+          {% if form.errors %}
+            <div class="alert alert-danger rounded-3" role="alert">
+              <strong>Please correct the highlighted fields:</strong>
+              {% for error in form.non_field_errors %}
+                <div class="small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form.website }}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="{{ form.name.id_for_label }}" class="form-label">Your Name <span class="text-danger">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                {{ form.phone }}
+                {% if form.phone.errors %}<div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email <small class="text-muted">(optional)</small></label>
+                {{ form.email }}
+                {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="{{ form.subject.id_for_label }}" class="form-label">Subject <span class="text-danger">*</span></label>
+                {{ form.subject }}
+                {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12">
+                <label for="{{ form.message.id_for_label }}" class="form-label">Message <span class="text-danger">*</span></label>
+                {{ form.message }}
+                {% if form.message.errors %}<div class="text-danger small mt-1">{{ form.message.errors.0 }}</div>{% endif %}
+              </div>
+              <div class="col-12 pt-2">
+                <button type="submit" class="btn btn-gt-primary px-4">
+                  Send Enquiry <i class="bi bi-send ms-1"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          {% if site_settings.map_embed_url %}
+            <div class="ratio ratio-21x9 mt-4 rounded-3 overflow-hidden border">
+              <iframe src="{{ site_settings.map_embed_url }}" title="{{ site_settings.academy_name }} Location Map" loading="lazy"></iframe>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

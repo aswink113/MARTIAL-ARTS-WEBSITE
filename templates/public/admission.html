@@ -1,0 +1,161 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Admission & Online Registration — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Join {{ site_settings.academy_name }}</span>
+    <h1>Admission &amp; Online Registration</h1>
+    <p>Submit your training application online. Our admissions staff will contact you to confirm class availability and schedule a trial assessment.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Form Column -->
+      <div class="col-lg-8">
+        <div class="gt-form-card">
+          <h2 class="h3 mb-2">Student Application Form</h2>
+          <p class="small text-muted mb-4">
+            Open to children (ages 5+), teens, and adults. Fields marked with <span class="text-danger">*</span> are required.
+            Parent or guardian details are required for applicants under 18.
+          </p>
+
+          {% if form.errors %}
+            <div class="alert alert-danger rounded-3" role="alert">
+              <strong>Please review the highlighted fields below:</strong>
+              {% for error in form.non_field_errors %}
+                <div class="small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+            <!-- Spam Honeypot -->
+            {{ form.website }}
+
+            <div class="row g-3">
+              <div class="col-md-7">
+                <label for="{{ form.student_name.id_for_label }}" class="form-label">Student Full Name <span class="text-danger">*</span></label>
+                {{ form.student_name }}
+                {% if form.student_name.errors %}
+                  <div class="text-danger small mt-1">{{ form.student_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-5">
+                <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                {{ form.date_of_birth }}
+                {% if form.date_of_birth.errors %}
+                  <div class="text-danger small mt-1">{{ form.date_of_birth.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.guardian_name.id_for_label }}" class="form-label">Parent / Guardian Name <small class="text-muted">(required if under 18)</small></label>
+                {{ form.guardian_name }}
+                {% if form.guardian_name.errors %}
+                  <div class="text-danger small mt-1">{{ form.guardian_name.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.phone.id_for_label }}" class="form-label">Contact Phone <span class="text-danger">*</span></label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                  <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email Address <small class="text-muted">(optional)</small></label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                  <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.course.id_for_label }}" class="form-label">Selected Programme <span class="text-danger">*</span></label>
+                {{ form.course }}
+                {% if form.course.errors %}
+                  <div class="text-danger small mt-1">{{ form.course.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.preferred_time.id_for_label }}" class="form-label">Preferred Class / Time</label>
+                {{ form.preferred_time }}
+                {% if form.preferred_time.errors %}
+                  <div class="text-danger small mt-1">{{ form.preferred_time.errors.0 }}</div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.experience.id_for_label }}" class="form-label">Prior Martial Arts Experience</label>
+                {{ form.experience }}
+              </div>
+
+              <div class="col-12">
+                <label for="{{ form.message.id_for_label }}" class="form-label">Additional Notes or Questions</label>
+                {{ form.message }}
+              </div>
+
+              <div class="col-12">
+                <div class="p-3 rounded-3 bg-light border">
+                  <div class="form-check">
+                    {{ form.consent_given }}
+                    <label class="form-check-label small" for="{{ form.consent_given.id_for_label }}">
+                      I consent to {{ site_settings.academy_name }} storing and reviewing these details to process this admission application and arrange trial class contact (including guardian consent for applicants under 18).
+                      <a href="{% url 'privacy' %}" target="_blank" class="text-danger fw-semibold">Read Privacy Notice</a>. <span class="text-danger">*</span>
+                    </label>
+                  </div>
+                  {% if form.consent_given.errors %}
+                    <div class="text-danger small mt-1">{{ form.consent_given.errors.0 }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="col-12 pt-2">
+                <button type="submit" class="btn btn-gt-primary btn-lg px-5 w-100 w-md-auto">
+                  Submit Admission Application <i class="bi bi-check2-circle ms-1"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Guidance Sidebar -->
+      <div class="col-lg-4">
+        <div class="gt-form-card mb-4">
+          <span class="gt-eyebrow">What Happens Next</span>
+          <h3 class="h4 mb-3">Admission Process</h3>
+          <ol class="ps-3 small text-muted d-flex flex-column gap-2 mb-0">
+            <li><strong>Application Received:</strong> You receive a unique reference number immediately upon submission.</li>
+            <li><strong>Staff Review &amp; Contact:</strong> Our admissions coordinator contacts you within 1–2 working days to confirm space.</li>
+            <li><strong>Trial / Assessment:</strong> Prospective students attend a guided introductory session in comfortable sportswear.</li>
+            <li><strong>Enrolment Confirmation:</strong> Admission is formally confirmed once staff approve your placement.</li>
+          </ol>
+        </div>
+
+        <div class="gt-form-card">
+          <h3 class="h5 mb-2">Prefer to Speak Directly?</h3>
+          <p class="small text-muted mb-3">Call our desk or chat on WhatsApp for quick class advice.</p>
+          <div class="d-grid gap-2">
+            <a href="tel:{{ site_settings.phone }}" class="btn btn-gt-navy">
+              <i class="bi bi-telephone-fill me-2"></i> Call {{ site_settings.phone }}
+            </a>
+            <a href="https://wa.me/{{ site_settings.whatsapp }}?text=Hello%20Greentrack%20Martial%20Arts%2C%20I%20would%20like%20help%20choosing%20a%20class." target="_blank" rel="noopener" class="btn btn-success">
+              <i class="bi bi-whatsapp me-2"></i> WhatsApp Enquiry
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

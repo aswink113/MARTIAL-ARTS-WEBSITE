@@ -1,0 +1,52 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}General Enquiries — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}General Enquiries{% endblock %}
+
+{% block content %}
+<div class="portal-card p-4">
+  <h2 class="h5 fw-bold mb-3">Contact Page Messages ({{ enquiries|length }})</h2>
+  <div class="d-flex flex-column gap-3">
+    {% for enq in enquiries %}
+      <div class="border rounded-3 p-3">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+          <div>
+            <span class="badge bg-dark me-2">{{ enq.status }}</span>
+            <strong>{{ enq.name }}</strong> &bull; <a href="tel:{{ enq.phone }}">{{ enq.phone }}</a>
+            {% if enq.email %}&bull; {{ enq.email }}{% endif %}
+          </div>
+          <small class="text-muted">{{ enq.submitted_at|date:"d M Y, g:i A" }}</small>
+        </div>
+        <div class="fw-semibold small text-danger mb-1">{{ enq.subject }}</div>
+        <p class="small text-muted mb-3">{{ enq.message }}</p>
+
+        <form method="post" class="row g-2 align-items-end">
+          {% csrf_token %}
+          <input type="hidden" name="enquiry_id" value="{{ enq.pk }}">
+          <div class="col-md-3">
+            <select name="status" class="form-select form-select-sm">
+              {% for st in status_choices %}
+                <option value="{{ st }}" {% if enq.status == st %}selected{% endif %}>{{ st }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-7">
+            <input type="text" name="staff_notes" value="{{ enq.staff_notes }}" placeholder="Internal response notes..." class="form-control form-control-sm">
+          </div>
+          <div class="col-md-2 d-flex gap-1">
+            <button type="submit" class="btn btn-sm btn-dark w-100">Update</button>
+          </div>
+        </form>
+        <form method="post" class="mt-2 text-end" onsubmit="return confirm('Delete this enquiry?');">
+          {% csrf_token %}
+          <input type="hidden" name="enquiry_id" value="{{ enq.pk }}">
+          <input type="hidden" name="action" value="delete_enquiry">
+          <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash me-1"></i> Delete</button>
+        </form>
+      </div>
+    {% empty %}
+      <p class="text-muted mb-0">No general enquiries received yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

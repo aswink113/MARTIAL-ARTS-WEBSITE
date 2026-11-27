@@ -1,0 +1,110 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Application {{ application.reference }} — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Review Application {{ application.reference }}{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'academy_panel:applications' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i> Back to Applications
+  </a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="portal-card p-4 mb-4">
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <span class="small text-muted font-monospace">{{ application.reference }}</span>
+          <h2 class="h4 fw-bold mb-0">{{ application.student_name }}</h2>
+        </div>
+        <span class="badge rounded-pill status-badge-{{ application.status|cut:' Scheduled' }} fs-6">{{ application.status }}</span>
+      </div>
+
+      <div class="row g-3 small">
+        <div class="col-sm-6"><strong>Date of Birth:</strong> {{ application.date_of_birth|date:"d M Y" }} ({{ application.computed_age }} yrs)</div>
+        <div class="col-sm-6"><strong>Guardian:</strong> {{ application.guardian_name|default:"Adult Applicant / Self" }}</div>
+        <div class="col-sm-6"><strong>Phone:</strong> <a href="tel:{{ application.phone }}">{{ application.phone }}</a></div>
+        <div class="col-sm-6"><strong>Email:</strong> {{ application.email|default:"Not provided" }}</div>
+        <div class="col-sm-6"><strong>Programme:</strong> {{ application.course.name }}</div>
+        <div class="col-sm-6"><strong>Preferred Batch:</strong> {{ application.preferred_time|default:"Any available" }}</div>
+        <div class="col-sm-6"><strong>Prior Experience:</strong> {{ application.experience }}</div>
+        <div class="col-sm-6"><strong>Submitted:</strong> {{ application.submitted_at|date:"d M Y, g:i A" }}</div>
+        <div class="col-12 pt-2 border-top">
+          <strong>Applicant Message:</strong>
+          <p class="text-muted mb-0 mt-1">{{ application.message|default:"No additional notes provided." }}</p>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 mt-4 pt-3 border-top">
+        <a href="tel:{{ application.phone }}" class="btn btn-dark btn-sm"><i class="bi bi-telephone me-1"></i> Call Applicant</a>
+        <a href="https://wa.me/{{ application.phone|cut:'+'|cut:' ' }}?text=Hello%20from%20{{ site_settings.academy_name|urlencode }}%20regarding%20application%20{{ application.reference }}." target="_blank" rel="noopener" class="btn btn-success btn-sm">
+          <i class="bi bi-whatsapp me-1"></i> Message on WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <!-- Internal Follow-up Notes (Never shown publicly) -->
+    <div class="portal-card p-4">
+      <h3 class="h5 fw-bold mb-3">Internal Staff Follow-up Notes</h3>
+      <form method="post" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_note">
+        <div class="mb-2">
+          <label class="form-label small fw-bold">Add Note</label>
+          {{ note_form.note }}
+        </div>
+        <div class="row g-2 align-items-end">
+          <div class="col-sm-6">
+            <label class="form-label small fw-bold">Next Follow-up Date (optional)</label>
+            {{ note_form.follow_up_at }}
+          </div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-dark w-100">Save Internal Note</button>
+          </div>
+        </div>
+      </form>
+
+      <div class="d-flex flex-column gap-2">
+        {% for note in notes %}
+          <div class="p-3 rounded-3 bg-light border">
+            <div class="d-flex justify-content-between small text-muted mb-1">
+              <strong>{{ note.author.get_full_name|default:note.author.username|default:"Staff" }}</strong>
+              <span>{{ note.created_at|date:"d M Y, g:i A" }}</span>
+            </div>
+            <p class="small mb-1">{{ note.note }}</p>
+            {% if note.follow_up_at %}
+              <span class="badge bg-warning text-dark">Follow-up: {{ note.follow_up_at|date:"d M Y" }}</span>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p class="small text-muted mb-0">No internal notes recorded yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="portal-card p-4">
+      <h3 class="h5 fw-bold mb-3">Update Application Status</h3>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_status">
+        <div class="mb-3">
+          <label class="form-label small fw-bold">Workflow Stage</label>
+          {{ status_form.status }}
+        </div>
+        <button type="submit" class="btn btn-danger w-100 fw-bold">Update Status</button>
+      </form>
+      <form method="post" onsubmit="return confirm('Permanently delete this application?');" class="mt-3 pt-3 border-top">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="delete_application">
+        <button type="submit" class="btn btn-outline-danger btn-sm w-100">Delete Application</button>
+      </form>
+      <div class="small text-muted mt-3">
+        <strong>Workflow Guide:</strong> New &rarr; Contacted &rarr; Trial Scheduled &rarr; Approved / Waitlisted / Rejected.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

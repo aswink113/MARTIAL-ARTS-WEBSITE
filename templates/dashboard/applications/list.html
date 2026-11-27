@@ -1,0 +1,70 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Admission Applications — {{ site_settings.academy_name }}{% endblock %}
+{% block page_heading %}Admission Applications{% endblock %}
+
+{% block content %}
+<div class="portal-card p-4 mb-4">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label small fw-bold">Search Applicant</label>
+      <input type="text" name="q" value="{{ search_q }}" class="form-control" placeholder="Student name, guardian, reference, or phone">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label small fw-bold">Filter by Status</label>
+      <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        {% for st in status_choices %}
+          <option value="{{ st }}" {% if selected_status == st %}selected{% endif %}>{{ st }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button type="submit" class="btn btn-dark w-100">Filter</button>
+      {% if selected_status or search_q %}
+        <a href="{% url 'academy_panel:applications' %}" class="btn btn-outline-secondary">Reset</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+
+<div class="portal-card p-4">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Reference</th>
+          <th>Applicant</th>
+          <th>Phone</th>
+          <th>Programme</th>
+          <th>Submitted</th>
+          <th>Notes</th>
+          <th>Status</th>
+          <th class="text-end">Manage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+          <tr>
+            <td class="fw-bold font-monospace small">{{ app.reference }}</td>
+            <td>
+              <div class="fw-semibold">{{ app.student_name }}</div>
+              <small class="text-muted">Age: {{ app.computed_age }} {% if app.guardian_name %}&bull; Guardian: {{ app.guardian_name }}{% endif %}</small>
+            </td>
+            <td class="small">{{ app.phone }}</td>
+            <td class="small">{{ app.course.name }}</td>
+            <td class="small text-muted">{{ app.submitted_at|date:"d M Y" }}</td>
+            <td><span class="badge bg-light text-dark border">{{ app.notes_count }}</span></td>
+            <td><span class="badge rounded-pill status-badge-{{ app.status|cut:' Scheduled' }}">{{ app.status }}</span></td>
+            <td class="text-end">
+              <a href="{% url 'academy_panel:application_detail' app.pk %}" class="btn btn-sm btn-dark">Open</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center text-muted py-4">No applications match your filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

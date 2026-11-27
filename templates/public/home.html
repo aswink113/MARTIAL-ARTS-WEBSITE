@@ -1,0 +1,395 @@
+{% extends 'public/base.html' %}
+{% load static %}
+
+{% block title %}{{ site_settings.academy_name }} — Karate, Boxing &amp; Kung Fu Academy in Bengaluru{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO SECTION — Red Moon + Samurai Reference Composition
+     ═══════════════════════════════════════════════════════ -->
+<section class="gt-hero gt-hero-kensei">
+  <img src="{% static 'images/hero-dojo-bg.jpg' %}?v=20261127l"
+    alt="{{ site_settings.academy_name }} — Traditional Dojo" class="gt-hero-bg">
+  <div class="gt-hero-overlay"></div>
+
+  <!-- Right-side Sensei & Student Cutout -->
+  <div class="gt-hero-samurai-wrap" aria-hidden="true">
+    <img src="{% static 'images/hero-sensei-kick.png' %}?v=20261127l" alt="" class="gt-hero-samurai">
+  </div>
+
+  <!-- Martial-arts Wind Gust Streaks (first-load entrance) -->
+  <div class="gt-wind-layer" aria-hidden="true">
+    <span class="gt-wind-streak gt-wind-1"></span>
+    <span class="gt-wind-streak gt-wind-2"></span>
+    <span class="gt-wind-streak gt-wind-3"></span>
+    <span class="gt-wind-streak gt-wind-4"></span>
+    <span class="gt-wind-clash"></span>
+  </div>
+
+  <div class="container gt-hero-content">
+    <div class="row align-items-center">
+      <div class="col-lg-8 col-xl-7">
+
+        <!-- Eyebrow Credibility Pill Badge -->
+        <div class="mb-3 gt-anim-left-1">
+          <span class="gt-hero-eyebrow-pill">
+            <span class="gt-red-dot"></span>
+            EST. 2014 &bull; CERTIFIED INSTRUCTORS &bull; ALL AGE GROUPS
+          </span>
+        </div>
+
+        <!-- Stacked Display Title -->
+        <h1 class="gt-kensei-title mb-4">
+          <span class="gt-kensei-top gt-anim-left-1">MASTER THE MIND</span>
+          <span class="gt-kensei-red gt-anim-left-2">COMMAND THE BODY</span>
+        </h1>
+
+        <!-- Grounded Dojo Meta Details -->
+        <div class="gt-kensei-meta mb-4 gt-anim-left-3">
+          <div class="gt-kensei-meta-col">
+            <div class="gt-hero-styles-tag">
+              <i class="bi bi-shield-check text-danger me-1"></i> KARATE &bull; KICKBOXING &bull; SELF-DEFENCE
+            </div>
+            <p class="gt-kensei-caption mb-0">
+              THE MARTIAL ARTS<br>ACADEMY &bull; BENGALURU
+            </p>
+          </div>
+          <div class="gt-kensei-divider"></div>
+          <div class="gt-kensei-meta-col">
+            <p class="gt-kensei-caption gt-kensei-caption-bright mb-0">
+              DISCIPLINE, SELF-DEFENCE<br>FOR KIDS, TEENS &amp; ADULTS
+            </p>
+          </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="d-flex flex-wrap align-items-center gap-3 mt-4 gt-anim-left-4">
+          <a href="{% if primary_banner %}{{ primary_banner.button_url }}{% else %}{% url 'admission' %}{% endif %}"
+             class="btn btn-dojo-primary">
+            <span>{% if primary_banner %}{{ primary_banner.button_text }}{% else %}Join Now{% endif %}</span>
+            <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+          </a>
+          <a href="{% url 'admission' %}"
+             class="btn btn-dojo-secondary">
+            <span>Book a Free Trial Class</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Semi-transparent Bottom Hero Proof Strip -->
+  <div class="gt-hero-proof-strip">
+    <div class="container">
+      <div class="row g-3 text-center text-md-start align-items-center">
+        <div class="col-6 col-md-3 gt-proof-item">
+          <span class="gt-proof-num">10+</span>
+          <span class="gt-proof-label">Years of Coaching Excellence</span>
+        </div>
+        <div class="col-6 col-md-3 gt-proof-item">
+          <span class="gt-proof-num">500+</span>
+          <span class="gt-proof-label">Students Trained</span>
+        </div>
+        <div class="col-6 col-md-3 gt-proof-item">
+          <span class="gt-proof-num">4</span>
+          <span class="gt-proof-label">Core Disciplines</span>
+        </div>
+        <div class="col-6 col-md-3 gt-proof-item">
+          <span class="gt-proof-num">100+</span>
+          <span class="gt-proof-label">State &amp; National Medals</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3 — Core Training Disciplines
+     ═══════════════════════════════════════════════════════ -->
+<section class="gt-section">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-5 gap-3">
+      <div>
+        <span class="gt-eyebrow">Training Programmes</span>
+        <h2 class="gt-section-title mb-0">Core Training Disciplines</h2>
+      </div>
+      <a href="{% url 'course_list' %}" class="btn btn-gt-outline btn-sm">
+        View All Courses <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for course in featured_courses %}
+      <div class="col-md-6 col-lg-4">
+        {% include 'partials/course_card.html' with course=course %}
+      </div>
+      {% empty %}
+      <div class="col-12">
+        <p class="text-muted">Training programmes will appear here once published.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — Why Choose Greentrack (feature pillars)
+     ═══════════════════════════════════════════════════════ -->
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="text-center mx-auto mb-5" style="max-width: 640px;">
+      <span class="gt-eyebrow">The Greentrack Standard</span>
+      <h2 class="gt-section-title">Why Choose Our Academy</h2>
+      <p class="text-muted mb-0">Built around parent confidence, clear grading milestones, and authentic martial arts
+        instruction.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3">
+        <div class="gt-feature-box text-center">
+          <div class="gt-feature-icon mx-auto"><i class="bi bi-award-fill"></i></div>
+          <h3 class="h5 mt-3 mb-2">Qualified Instructors</h3>
+          <p class="small text-muted mb-0">Experienced black-belt and certified combat coaches dedicated to safe,
+            attentive progression.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="gt-feature-box text-center">
+          <div class="gt-feature-icon mx-auto"><i class="bi bi-diagram-3-fill"></i></div>
+          <h3 class="h5 mt-3 mb-2">Structured Training</h3>
+          <p class="small text-muted mb-0">Clear syllabus stages by age group and belt level so students always know
+            their next milestone.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="gt-feature-box text-center">
+          <div class="gt-feature-icon mx-auto"><i class="bi bi-shield-fill-check"></i></div>
+          <h3 class="h5 mt-3 mb-2">Safe Environment</h3>
+          <p class="small text-muted mb-0">Supervised, padded training floors with age-matched groups and strict respect
+            and safety protocols.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3">
+        <div class="gt-feature-box text-center">
+          <div class="gt-feature-icon mx-auto"><i class="bi bi-trophy-fill"></i></div>
+          <h3 class="h5 mt-3 mb-2">Competition Prep</h3>
+          <p class="small text-muted mb-0">Optional tournament pathways, grading examinations, and fitness conditioning
+            for committed athletes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — Kids & Adults Visual Panels
+     ═══════════════════════════════════════════════════════ -->
+<section class="gt-section">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="gt-eyebrow">Who We Train</span>
+      <h2 class="gt-section-title">Programmes for Every Age</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="gt-split-panel">
+          <img
+            src="{% if kids_course and kids_course.image %}{{ kids_course.image.url }}{% else %}/media/courses/kids-martial-arts.jpg{% endif %}"
+            alt="Kids Martial Arts Training">
+          <div class="gt-split-overlay"></div>
+          <div class="gt-split-body">
+            <span class="badge bg-warning text-dark fw-bold mb-2">Ages 5–12</span>
+            <h3>Kids &amp; Youth Martial Arts</h3>
+            <p class="small text-white-50 mb-3">Build focus, coordination, respect, and anti-bullying confidence in fun,
+              structured age-appropriate classes.</p>
+            <a href="{% if kids_course %}{% url 'course_detail' kids_course.slug %}{% else %}{% url 'course_list' %}{% endif %}"
+              class="btn btn-gt-primary btn-sm px-4">
+              Explore Kids Programmes <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="gt-split-panel">
+          <img
+            src="{% if adult_course and adult_course.image %}{{ adult_course.image.url }}{% else %}/media/courses/self-defence.jpg{% endif %}"
+            alt="Adult Training &amp; Self Defence">
+          <div class="gt-split-overlay"></div>
+          <div class="gt-split-body">
+            <span class="badge bg-danger fw-bold mb-2">Teens &amp; Adults</span>
+            <h3>Adult Training &amp; Self-Defence</h3>
+            <p class="small text-white-50 mb-3">Sharpen striking, practical self-defence, fitness, and stress relief
+              alongside supportive training partners.</p>
+            <a href="{% if adult_course %}{% url 'course_detail' adult_course.slug %}{% else %}{% url 'course_list' %}{% endif %}"
+              class="btn btn-gt-outline-light btn-sm px-4">
+              Explore Adult Programmes <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6 — Head Coach Introduction
+     ═══════════════════════════════════════════════════════ -->
+{% if head_coach %}
+<section class="gt-section gt-section-navy">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-md-5 col-lg-4 text-center text-md-start">
+        <div class="gt-coach-portrait mx-auto mx-md-0">
+          {% if head_coach.photo %}
+          <img src="{{ head_coach.photo.url }}" alt="{{ head_coach.name }}">
+          {% else %}
+          <img src="{% static 'images/hero-dojo.jpg' %}" alt="{{ head_coach.name }}">
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-md-7 col-lg-8">
+        <span class="gt-eyebrow gt-gold-accent">Meet Our Leadership</span>
+        <h2 class="gt-section-title text-white mb-1">{{ head_coach.name }}</h2>
+        <p class="text-warning fw-semibold mb-3">
+          {{ head_coach.role }} &bull; {{ head_coach.rank_grade }} &bull; {{ head_coach.experience }}
+        </p>
+        <p class="text-white-50 mb-4" style="max-width: 600px;">{{ head_coach.biography }}</p>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <span class="gt-coach-badge">
+            <i class="bi bi-patch-check-fill text-warning me-1"></i> {{ head_coach.qualifications }}
+          </span>
+          <span class="gt-coach-badge">
+            <i class="bi bi-award-fill text-warning me-1"></i> {{ head_coach.disciplines }}
+          </span>
+        </div>
+        <a href="{% url 'about' %}" class="btn btn-gt-primary">
+          Meet Full Instructor Team <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7 — Academy Achievements
+     ═══════════════════════════════════════════════════════ -->
+{% if achievements %}
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-5 gap-3">
+      <div>
+        <span class="gt-eyebrow">Awards &amp; Recognition</span>
+        <h2 class="gt-section-title mb-0">Academy Achievements</h2>
+      </div>
+      <a href="{% url 'achievement_list' %}" class="btn btn-gt-outline btn-sm">
+        All Achievements <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for item in achievements %}
+      <div class="col-md-4">
+        {% include 'partials/achievement_card.html' with achievement=item %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 8 — Gallery Preview
+     ═══════════════════════════════════════════════════════ -->
+{% if gallery_preview %}
+<section class="gt-section">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-5 gap-3">
+      <div>
+        <span class="gt-eyebrow">Inside the Dojo</span>
+        <h2 class="gt-section-title mb-0">Training &amp; Event Gallery</h2>
+      </div>
+      <a href="{% url 'gallery_list' %}" class="btn btn-gt-outline btn-sm">
+        Open Full Gallery <i class="bi bi-images ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for item in gallery_preview %}
+      <div class="col-sm-6 col-lg-4">
+        {% include 'partials/gallery_tile.html' with item=item %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 9 — Timetable Preview (only if data exists)
+     ═══════════════════════════════════════════════════════ -->
+{% if timetable_preview %}
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-5 gap-3">
+      <div>
+        <span class="gt-eyebrow">Weekly Classes</span>
+        <h2 class="gt-section-title mb-0">Upcoming Class Schedule</h2>
+      </div>
+      <a href="{% url 'timetable' %}" class="btn btn-gt-navy btn-sm px-3">
+        View Full Timetable <i class="bi bi-calendar3 ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for sess in timetable_preview %}
+      <div class="col-md-6 col-lg-4">
+        <div class="gt-feature-box p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge bg-dark">{{ sess.get_weekday_display }}</span>
+            <span class="gt-time-pill">
+              <i class="bi bi-clock"></i> {{ sess.start_time|time:"g:i A" }} – {{ sess.end_time|time:"g:i A" }}
+            </span>
+          </div>
+          <h3 class="h5 mb-1">{{ sess.course.name }}</h3>
+          <p class="small text-muted mb-1">
+            <i class="bi bi-people me-1"></i> {{ sess.age_group|default:sess.course.age_group }}
+          </p>
+          <p class="small text-muted mb-0">
+            <i class="bi bi-geo-alt me-1"></i> {{ sess.location }}
+            {% if sess.instructor %} &bull; {{ sess.instructor.name }}{% endif %}
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 10 — Final CTA Band
+     ═══════════════════════════════════════════════════════ -->
+<section class="gt-cta-band">
+  <div class="container text-center py-2">
+    <span class="gt-eyebrow gt-gold-accent">Begin With Confidence</span>
+    <h2 class="gt-section-title text-white mb-3">Start Your Training Journey Today</h2>
+    <p class="text-white-50 mx-auto mb-5" style="max-width: 560px;">
+      Submit an online admission enquiry and book your free introductory session, or message us directly on WhatsApp —
+      we reply within hours.
+    </p>
+    <div class="d-flex flex-wrap justify-content-center gap-3">
+      <a href="{% url 'admission' %}" class="btn btn-gt-primary btn-lg px-5">
+        Apply Online <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+      <a href="https://wa.me/{{ site_settings.whatsapp }}?text={{ whatsapp_prefill }}" target="_blank" rel="noopener"
+        class="btn btn-whatsapp btn-lg px-4">
+        <i class="bi bi-whatsapp me-2"></i> WhatsApp Enquiry
+      </a>
+      <a href="tel:{{ site_settings.phone }}" class="btn btn-gt-outline-light btn-lg px-4">
+        <i class="bi bi-telephone me-2"></i> {{ site_settings.phone }}
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

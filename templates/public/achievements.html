@@ -1,0 +1,33 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Achievements & Awards — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Awards &amp; Certifications</span>
+    <h1>Academy Achievements</h1>
+    <p>Verified tournament results, grading milestones, and student recognition awards.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="row g-4">
+      {% for achievement in achievements %}
+        <div class="col-md-6 col-lg-4">
+          {% include 'partials/achievement_card.html' with achievement=achievement %}
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="gt-form-card text-center py-5">
+            <i class="bi bi-trophy fs-1 text-muted d-block mb-2"></i>
+            <h3 class="h4">No achievements published yet</h3>
+            <p class="text-muted mb-0">Verified academy awards and grading certificates will be displayed here.</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

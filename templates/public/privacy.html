@@ -1,0 +1,28 @@
+{% extends 'public/base.html' %}
+
+{% block title %}Privacy & Data Notice — {{ site_settings.academy_name }}{% endblock %}
+
+{% block content %}
+<section class="gt-page-header">
+  <div class="container">
+    <span class="gt-eyebrow gt-gold-accent">Privacy &amp; Safeguarding</span>
+    <h1>Privacy &amp; Data Protection Notice</h1>
+    <p>How {{ site_settings.academy_name }} handles admission enquiries, minor consent, and academy photography.</p>
+  </div>
+</section>
+
+<section class="gt-section gt-section-light">
+  <div class="container">
+    <div class="gt-form-card mx-auto" style="max-width: 820px;">
+      <h2 class="h3 mb-3">1. Information We Collect</h2>
+      <p>{{ site_settings.privacy_notice|linebreaksbr }}</p>
+
+      <h3 class="h4 mt-4 mb-2">2. Minors &amp; Guardian Consent</h3>
+      <p class="text-muted">For any applicant under 18 years of age, parent or guardian details and explicit consent are required prior to trial scheduling or admission review. Photographs or competition certificates featuring minors are published only when guardian image consent has been verified by staff.</p>
+
+      <h3 class="h4 mt-4 mb-2">3. Access, Retention &amp; Removal Requests</h3>
+      <p class="text-muted mb-0">Admission records and follow-up notes are restricted to authorised academy admissions staff and managers. To request an update or deletion of personal data or gallery photographs, please contact us at <strong>{{ site_settings.email }}</strong> or call <strong>{{ site_settings.phone }}</strong>.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

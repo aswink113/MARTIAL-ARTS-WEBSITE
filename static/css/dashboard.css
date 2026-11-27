@@ -1,0 +1,121 @@
+/* Greentrack Martial Arts — Branded Staff Management Portal */
+:root {
+  --portal-navy: #14243A;
+  --portal-navy-deep: #0D1829;
+  --portal-red: #D83A3A;
+  --portal-gold: #E6A23C;
+  --portal-bg: #F4F6FA;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--portal-bg);
+  color: #1A2433;
+}
+
+.portal-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.portal-sidebar {
+  width: 265px;
+  background: linear-gradient(180deg, var(--portal-navy-deep) 0%, var(--portal-navy) 100%);
+  color: #FFFFFF;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-brand {
+  padding: 1.25rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.portal-nav-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 700;
+  padding: 0.9rem 1.25rem 0.35rem;
+}
+
+.portal-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.62rem 1.25rem;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.18s ease;
+}
+
+.portal-nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+}
+
+.portal-nav-link.active {
+  background: rgba(216, 58, 58, 0.16);
+  color: #FFFFFF;
+  border-left-color: var(--portal-red);
+  font-weight: 700;
+}
+
+.portal-main {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-topbar {
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.portal-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(20, 36, 58, 0.04);
+}
+
+.portal-stat-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-top: 4px solid var(--portal-navy);
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 4px 14px rgba(20, 36, 58, 0.04);
+  height: 100%;
+}
+
+.portal-stat-card.accent-red { border-top-color: var(--portal-red); }
+.portal-stat-card.accent-gold { border-top-color: var(--portal-gold); }
+.portal-stat-card.accent-green { border-top-color: #16A34A; }
+
+.portal-login-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0D1829 0%, #14243A 55%, #1E3452 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.status-badge-New { background: #DBEAFE; color: #1E40AF; }
+.status-badge-Contacted { background: #FEF3C7; color: #92400E; }
+.status-badge-Trial { background: #EDE9FE; color: #5B21B6; }
+.status-badge-Approved { background: #DCFCE7; color: #166534; }
+.status-badge-Waitlisted { background: #E2E8F0; color: #334155; }
+.status-badge-Rejected { background: #FEE2E2; color: #991B1B; }
