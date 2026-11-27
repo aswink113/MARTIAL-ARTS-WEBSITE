@@ -1,0 +1,30 @@
+# Python & Virtual Environments
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+
+# Django & Environment
+.env
+.env.*
+!.env.example
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+*.log
+
+# Node / React / Vite
+node_modules/
+frontend/node_modules/
+frontend/dist/
+npm-debug.log*
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
